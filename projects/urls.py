@@ -7,7 +7,9 @@ from . import views
 app_name = 'projects'
 
 urlpatterns = [
-    # For now, just a placeholder view
-    # Will expand this as I build features
-    path('', views.ProjectListView.as_view(), name='project_list'),
+    path('', views.ProjectListView.as_view(), name='list'),
+    path('new/', views.ProjectCreateView.as_view(), name='create'),
+    path('<int:pk>/', views.ProjectDetailView.as_view(), name='detail'),
+    path('<int:pk>/edit/', views.ProjectUpdateView.as_view(), name='edit'),
+    path('<int:pk>/delete/', views.ProjectDeleteView.as_view(), name='delete'),
 ]

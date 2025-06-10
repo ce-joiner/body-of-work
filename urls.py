@@ -26,3 +26,7 @@ urlpatterns = [
     path('projects/', include('projects.urls')),
     path('', RedirectView.as_view(url='/projects/', permanent=False)),
 ]
+
+# serve static media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
