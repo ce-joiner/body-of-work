@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Body of Work{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h1 class="form-title">Welcome Back</h1>
+        <p class="form-subtitle">Sign in to your Body of Work account</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}" class="form-label">
+                Username
+            </label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="invalid-feedback">
+                    {{ form.username.errors.0 }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}" class="form-label">
+                Password
+            </label>
+            {{ form.password }}
+            {% if form.password.errors %}
+                <div class="invalid-feedback">
+                    {{ form.password.errors.0 }}
+                </div>
+            {% endif %}
+        </div>
+
+        {% if form.non_field_errors %}
+            <div class="form-group">
+                <div class="invalid-feedback">
+                    {{ form.non_field_errors.0 }}
+                </div>
+            </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary btn-full-width">
+            Sign In
+        </button>
+    </form>
+
+    <div class="form-footer">
+        <p>
+            Don't have an account? 
+            <a href="{% url 'users:register' %}" class="form-link">Sign up here</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

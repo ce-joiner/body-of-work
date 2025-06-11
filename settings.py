@@ -142,6 +142,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files (uploaded content)
 MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Cloudinary configuration
 CLOUDINARY_STORAGE = {
