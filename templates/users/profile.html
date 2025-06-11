@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - Body of Work{% endblock %}
+
+{% block page_header %}
+<div class="page-header">
+    <h1 class="page-title">My Profile</h1>
+    <p class="page-subtitle">Manage your account settings</p>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Account Information</h2>
+    </div>
+    
+    <div class="profile-info">
+        <div class="form-group">
+            <label class="form-label">Username</label>
+            <p class="profile-value">{{ user.username }}</p>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Email</label>
+            <p class="profile-value">{{ user.email|default:"Not provided" }}</p>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <p class="profile-value">{{ user.get_full_name|default:"Not provided" }}</p>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Member Since</label>
+            <p class="profile-value">{{ user.date_joined|date:"F j, Y" }}</p>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Projects</label>
+            <p class="profile-value">{{ user.project_set.count }} project{{ user.project_set.count|pluralize }}</p>
+        </div>
+    </div>
+    
+    <div class="profile-actions">
+        <a href="{% url 'projects:list' %}" class="btn btn-primary">
+            Back to Projects
+        </a>
+        
+        <!-- You can add edit profile functionality later -->
+        <button class="btn btn-secondary" disabled>
+            Edit Profile (Coming Soon)
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.profile-value {
+    background-color: #f8f9fa;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    margin: 0;
+    color: #495057;
+}
+
+.profile-actions {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    gap: 1rem;
+}
+
+@media (max-width: 576px) {
+    .profile-actions {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}

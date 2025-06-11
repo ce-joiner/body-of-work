@@ -24,7 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('projects/', include('projects.urls')),
-    path('', RedirectView.as_view(url='/projects/', permanent=False)),
+    path('', RedirectView.as_view(pattern_name='projects:list', permanent=False)),
 ]
 
 # serve static media files during development

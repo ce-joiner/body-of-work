@@ -193,5 +193,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Login/Logout redirect URLs
 LOGIN_URL = 'users:login'
-LOGIN_REDIRECT_URL = 'projects:project_list'
+LOGIN_REDIRECT_URL = 'projects:list'
 LOGOUT_REDIRECT_URL = 'users:login'
+
+# Session settings for better user experience
+SESSION_COOKIE_AGE = 86400  # 24 hours
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+
+# Remember user login preference
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
