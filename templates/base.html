@@ -21,7 +21,7 @@
     <header class="header">
         <div class="nav-container">
             <!-- Logo/Brand -->
-            <a href="{% url 'projects:project_list' %}" class="logo">
+            <a href="{% url 'projects:list' %}" class="logo">
                 Body of Work
             </a>
             
@@ -29,10 +29,10 @@
             <nav class="nav-menu">
                 {% if user.is_authenticated %}
                     <!-- Authenticated user navigation -->
-                    <a href="{% url 'projects:project_list' %}" class="nav-link">
+                    <a href="{% url 'projects:list' %}" class="nav-link">
                         My Projects
                     </a>
-                    <a href="{% url 'projects:project_create' %}" class="nav-link btn-primary">
+                    <a href="{% url 'projects:create' %}" class="nav-link btn-primary">
                         New Project
                     </a>
                     
