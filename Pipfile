@@ -5,6 +5,13 @@ name = "pypi"
 
 [packages]
 django = "*"
+cloudinary = "*"
+django-cloudinary-storage = "*"
+pillow = "*"
+exifread = "*"
+python-decouple = "*"
+django-ratelimit = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 

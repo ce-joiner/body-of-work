@@ -10,12 +10,26 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+
 import os
 from pathlib import Path
-from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
+
+# Configure decouple to read from the correct .env location
+from decouple import Config, RepositoryEnv
+env_file = BASE_DIR / '.env'
+if env_file.exists():
+    config = Config(RepositoryEnv(str(env_file)))
+else:
+    # Fallback to default decouple behavior
+    from decouple import config
+    print(f"Warning: .env file not found at {env_file}")
+
+# Quick test to verify .env is being read
+print(f"Loading .env from: {env_file}")
+print(f"CLOUDINARY_CLOUD_NAME loaded: {config('CLOUDINARY_CLOUD_NAME', default='NOT_LOADED')[:10]}...")
 
 
 # Quick-start development settings - unsuitable for production
@@ -142,13 +156,15 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files (uploaded content)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / "media"
+# MEDIA_ROOT = BASE_DIR / "media"
+# Use Cloudinary for media files (user uploads)
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Cloudinary configuration
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
-    'API_KEY': config('CLOUDINARY_API_KEY', default=''),
-    'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': config('CLOUDINARY_API_KEY'),
+    'API_SECRET': config('CLOUDINARY_API_SECRET'),
 }
 
 # Use Cloudinary for media storage in production
@@ -179,6 +195,16 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 20971520  # 20MB
 ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/tiff', 'image/webp']
 MAX_UPLOAD_SIZE = 50 * 1024 * 1024  # 50MB
+
+# Allowed image types
+ALLOWED_IMAGE_TYPES = [
+    'image/jpeg',
+    'image/jpg', 
+    'image/png',
+    'image/tiff',
+    'image/webp',
+    'image/heic',  # iPhone photos
+]
 
 # Rate limiting
 RATELIMIT_ENABLE = True
