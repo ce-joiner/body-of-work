@@ -1,0 +1,305 @@
+<!-- projects/templates/projects/detail.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ project.title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/photos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <!-- Project Header -->
+    <div class="page-header">
+        <div class="flex justify-between items-center" style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h1 class="page-title">{{ project.title }}</h1>
+                <p class="page-subtitle">{{ project.description|default:"No description provided." }}</p>
+                
+                <!-- Project Status -->
+                <div class="project-status mt-2" style="margin-top: 1rem;">
+                    <span class="badge bg-success">Created {{ project.start_date }}</span>
+                    {% if project.target_end %}
+                        {% if project.is_overdue %}
+                            <span class="badge bg-danger">Overdue by {{ project.days_until_target|mul:-1 }} days</span>
+                        {% else %}
+                            <span class="badge bg-success">{{ project.days_until_target }} days remaining</span>
+                        {% endif %}
+                    {% endif %}
+                    <span class="badge bg-success">{{ project.photos.count }} photo{{ project.photos.count|pluralize }}</span>
+                </div>
+            </div>
+            
+            <div class="project-actions">
+                <!-- Project Actions -->
+                <div class="flex gap-2" style="display: flex; gap: 1rem;">
+                    <a href="{% url 'projects:photo_upload' project.pk %}" class="btn btn-primary">
+                        📸 Upload Photos
+                    </a>
+                    <a href="{% url 'projects:edit' project.pk %}" class="btn btn-secondary">
+                        ✏️ Edit Project
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Photo Gallery Section -->
+    {% if project.photos.exists %}
+        <div class="photo-gallery-section">
+            <!-- Gallery Controls -->
+            <div class="flex justify-between items-center mb-2" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 class="card-title">Photos ({{ project.photos.count }})</h2>
+                
+                <!-- Bulk Actions -->
+                <div class="bulk-actions" id="bulk-actions" style="display: none;">
+                    <form method="post" action="{% url 'projects:photos_bulk_action' project.pk %}" id="bulk-form">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <select name="action" class="form-control" id="bulk-action-select">
+                                <option value="">Bulk action...</option>
+                                <option value="feature">Mark as featured</option>
+                                <option value="unfeature">Remove featured</option>
+                                <option value="flag">Mark needs attention</option>
+                                <option value="unflag">Remove attention flag</option>
+                                <option value="delete">Delete permanently</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary" id="bulk-submit">
+                                Apply to <span id="selected-count">0</span> photos
+                            </button>
+                        </div>
+                        <input type="hidden" name="photo_ids" id="bulk-photo-ids">
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Selection Controls -->
+            <div class="selection-controls">
+                <button type="button" class="btn btn-outline-primary" id="select-all">
+                    Select All
+                </button>
+                <button type="button" class="btn btn-outline-secondary" id="select-none">
+                    Select None
+                </button>
+                <span class="selection-status">
+                    <span id="selection-status">Click photos to select them</span>
+                </span>
+            </div>
+            
+            <!-- Photo Grid -->
+            <div class="photo-grid" id="photo-grid">
+                {% for photo in project.photos.all %}
+                    <div class="photo-card" data-photo-id="{{ photo.id }}">
+                        <!-- Selection Checkbox -->
+                        <div class="photo-checkbox">
+                            <input type="checkbox" class="photo-select" value="{{ photo.id }}">
+                        </div>
+                        
+                        <!-- Photo Image -->
+                        <div class="photo-image">
+                            <img src="{{ photo.thumbnail_url|default:photo.image.url }}" 
+                                 alt="{{ photo.title|default:'Untitled' }}"
+                                 loading="lazy"
+                                 onclick="openPhotoDetail({{ photo.id }})">
+                        </div>
+                        
+                        <!-- Photo Info -->
+                        <div class="photo-info">
+                            <h6 class="photo-title">{{ photo.title|default:"Untitled"|truncatechars:30 }}</h6>
+                            {% if photo.caption %}
+                                <p class="photo-caption">{{ photo.caption|truncatechars:50 }}</p>
+                            {% endif %}
+                            
+                            <!-- Photo Status Badges -->
+                            <div class="photo-badges">
+                                {% if photo.is_featured %}
+                                    <span class="badge bg-warning">⭐ Featured</span>
+                                {% endif %}
+                                {% if photo.needs_attention %}
+                                    <span class="badge bg-danger">⚠️ Attention</span>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Photo Actions -->
+                            <div class="photo-actions">
+                                <a href="{% url 'projects:photo_detail' photo.id %}" 
+                                   class="btn btn-outline-primary">View</a>
+                                <a href="{% url 'projects:photo_edit' photo.id %}" 
+                                   class="btn btn-outline-secondary">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Load More (for pagination) -->
+            {% if project.photos.count > 20 %}
+                <div class="text-center mt-2" style="text-align: center; margin-top: 2rem;">
+                    <button class="btn btn-outline-primary" id="load-more">
+                        Load More Photos
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                📸
+            </div>
+            <h3 class="empty-state-title">No photos yet</h3>
+            <p class="empty-state-text">Start building your project by uploading some photos.</p>
+            <a href="{% url 'projects:photo_upload' project.pk %}" class="btn btn-primary">
+                Upload Your First Photos
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize photo selection functionality
+    initializePhotoSelection();
+    
+    // Initialize bulk actions
+    initializeBulkActions();
+});
+
+function initializePhotoSelection() {
+    const photoCards = document.querySelectorAll('.photo-card');
+    const selectAllBtn = document.getElementById('select-all');
+    const selectNoneBtn = document.getElementById('select-none');
+    const bulkActions = document.getElementById('bulk-actions');
+    const selectionStatus = document.getElementById('selection-status');
+    
+    // Handle individual photo selection
+    photoCards.forEach(card => {
+        const checkbox = card.querySelector('.photo-select');
+        
+        // Click on card selects/deselects
+        card.addEventListener('click', function(e) {
+            // Don't trigger on image clicks (those open detail)
+            if (e.target.tagName === 'IMG') return;
+            // Don't trigger on button clicks
+            if (e.target.closest('.photo-actions')) return;
+            
+            checkbox.checked = !checkbox.checked;
+            updateSelection();
+        });
+        
+        // Checkbox change event
+        checkbox.addEventListener('change', updateSelection);
+    });
+    
+    // Select all button
+    selectAllBtn.addEventListener('click', function() {
+        photoCards.forEach(card => {
+            card.querySelector('.photo-select').checked = true;
+        });
+        updateSelection();
+    });
+    
+    // Select none button
+    selectNoneBtn.addEventListener('click', function() {
+        photoCards.forEach(card => {
+            card.querySelector('.photo-select').checked = false;
+        });
+        updateSelection();
+    });
+    
+    function updateSelection() {
+        const selected = document.querySelectorAll('.photo-select:checked');
+        const selectedCount = selected.length;
+        
+        // Update visual selection
+        photoCards.forEach(card => {
+            const checkbox = card.querySelector('.photo-select');
+            if (checkbox.checked) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+        });
+        
+        // Update selection status
+        if (selectedCount === 0) {
+            selectionStatus.textContent = 'Click photos to select them';
+            bulkActions.style.display = 'none';
+        } else {
+            selectionStatus.textContent = `${selectedCount} photo${selectedCount !== 1 ? 's' : ''} selected`;
+            bulkActions.style.display = 'block';
+        }
+        
+        // Update bulk form
+        document.getElementById('selected-count').textContent = selectedCount;
+        
+        // Update hidden input with selected IDs
+        const selectedIds = Array.from(selected).map(cb => cb.value);
+        document.getElementById('bulk-photo-ids').value = selectedIds.join(',');
+    }
+}
+
+function initializeBulkActions() {
+    const bulkForm = document.getElementById('bulk-form');
+    const bulkActionSelect = document.getElementById('bulk-action-select');
+    
+    bulkForm.addEventListener('submit', function(e) {
+        const action = bulkActionSelect.value;
+        const selectedCount = document.querySelectorAll('.photo-select:checked').length;
+        
+        if (!action) {
+            e.preventDefault();
+            alert('Please select an action first.');
+            return;
+        }
+        
+        if (selectedCount === 0) {
+            e.preventDefault();
+            alert('Please select photos first.');
+            return;
+        }
+        
+        // Confirm destructive actions
+        if (action === 'delete') {
+            const confirmMsg = `Are you sure you want to permanently delete ${selectedCount} photo${selectedCount !== 1 ? 's' : ''}? This action cannot be undone.`;
+            if (!confirm(confirmMsg)) {
+                e.preventDefault();
+                return;
+            }
+        }
+        
+        // Show loading state
+        const submitBtn = document.getElementById('bulk-submit');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ Processing...';
+    });
+}
+
+// Function to open photo detail (called from template)
+function openPhotoDetail(photoId) {
+    window.location.href = `/projects/photos/${photoId}/`;
+}
+
+// CSRF token helper for AJAX requests 
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        // Split the entire cookie string into individual cookies
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Check if this cookie starts with our target name followed by '='
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                // Extract the value part after the '=' sign
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

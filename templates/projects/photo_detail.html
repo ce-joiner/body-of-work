@@ -1,0 +1,195 @@
+<!-- projects/templates/projects/photo_detail.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ photo.title|default:"Photo" }} - {{ project.title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/photos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <!-- Breadcrumb Navigation -->
+    <div class="card" style="margin-bottom: 2rem; padding: 1rem;">
+        <a href="{% url 'projects:list' %}" class="form-link">Projects</a>
+        <span style="margin: 0 0.5rem; color: #6c757d;">→</span>
+        <a href="{% url 'projects:detail' project.pk %}" class="form-link">{{ project.title }}</a>
+        <span style="margin: 0 0.5rem; color: #6c757d;">→</span>
+        <span style="color: #6c757d;">{{ photo.title|default:"Photo" }}</span>
+    </div>
+
+    <div style="display: flex; gap: 2rem;">
+        <!-- Main Photo Display -->
+        <div style="flex: 2;">
+            <div class="card" style="padding: 1rem;">
+                <div class="photo-display">
+                    <img src="{{ photo.image.url }}" 
+                         alt="{{ photo.title|default:'Photo' }}"
+                         style="max-width: 100%; max-height: 70vh; border-radius: 8px;">
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                <button class="btn btn-secondary" onclick="history.back()">
+                    ← Back to Project
+                </button>
+                
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="{% url 'projects:photo_edit' photo.id %}" class="btn btn-outline-primary">
+                        ✏️ Edit
+                    </a>
+                    <a href="{% url 'projects:photo_delete' photo.id %}" class="btn btn-outline-secondary" 
+                       onclick="return confirm('Delete this photo permanently?')">
+                        Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photo Information Sidebar -->
+        <div style="flex: 1; min-width: 300px;">
+            <!-- Basic Information -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Photo Information</h3>
+                </div>
+                
+                <div class="info-group">
+                    <label class="form-label">Title:</label>
+                    <p>{{ photo.title|default:"Untitled" }}</p>
+                </div>
+
+                {% if photo.caption %}
+                <div class="info-group">
+                    <label class="form-label">Caption:</label>
+                    <p>{{ photo.caption }}</p>
+                </div>
+                {% endif %}
+
+                <div class="info-group">
+                    <label class="form-label">Uploaded:</label>
+                    <p>{{ photo.uploaded_at|date:"M d, Y \a\\t g:i A" }}</p>
+                </div>
+
+                <div class="info-group">
+                    <label class="form-label">File Size:</label>
+                    <p>{{ photo.file_size_human }}</p>
+                </div>
+
+                {% if photo.width and photo.height %}
+                <div class="info-group">
+                    <label class="form-label">Dimensions:</label>
+                    <p>{{ photo.width }} × {{ photo.height }} pixels</p>
+                </div>
+                {% endif %}
+
+                <div class="info-group">
+                    <label class="form-label">Format:</label>
+                    <p>{{ photo.mime_type|default:"Unknown" }}</p>
+                </div>
+
+                <!-- Status Badges -->
+                <div class="info-group">
+                    <label class="form-label">Status:</label>
+                    <div class="photo-badges">
+                        {% if photo.is_featured %}
+                            <span class="badge bg-warning">⭐ Featured</span>
+                        {% endif %}
+                        {% if photo.needs_attention %}
+                            <span class="badge bg-danger">⚠️ Needs Attention</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Camera Information -->
+            {% if camera_info %}
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📸 Camera Settings</h3>
+                </div>
+                
+                {% if camera_info.make %}
+                <div class="info-group">
+                    <label class="form-label">Camera:</label>
+                    <p>{{ camera_info.make }} {{ camera_info.model|default:"" }}</p>
+                </div>
+                {% endif %}
+
+                {% if camera_info.focal_length %}
+                <div class="info-group">
+                    <label class="form-label">Focal Length:</label>
+                    <p>{{ camera_info.focal_length }}</p>
+                </div>
+                {% endif %}
+
+                {% if camera_info.aperture %}
+                <div class="info-group">
+                    <label class="form-label">Aperture:</label>
+                    <p>f/{{ camera_info.aperture }}</p>
+                </div>
+                {% endif %}
+
+                {% if camera_info.shutter_speed %}
+                <div class="info-group">
+                    <label class="form-label">Shutter Speed:</label>
+                    <p>{{ camera_info.shutter_speed }}</p>
+                </div>
+                {% endif %}
+
+                {% if camera_info.iso %}
+                <div class="info-group">
+                    <label class="form-label">ISO:</label>
+                    <p>{{ camera_info.iso }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Technical Details (Optional) -->
+            {% if photo.exif_data %}
+            <div class="card">
+                <div class="card-header">
+                    <button class="btn btn-secondary" onclick="toggleExifData()" style="width: 100%;">
+                        <span class="card-title">🔍 Technical Details</span>
+                        <span id="exif-toggle">▼</span>
+                    </button>
+                </div>
+                <div id="exif-data" style="display: none; max-height: 300px; overflow-y: auto; padding: 1rem;">
+                    {% for key, value in photo.exif_data.items %}
+                        {% if value and key != "JPEGThumbnail" and key != "TIFFThumbnail" %}
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f1f1f1;">
+                            <small style="font-weight: bold; color: #6c757d;">{{ key }}:</small>
+                            <small>{{ value|truncatechars:40 }}</small>
+                        </div>
+                        {% endif %}
+                    {% empty %}
+                        <p style="color: #6c757d; margin: 0;">No technical data available</p>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Simple toggle for EXIF data
+function toggleExifData() {
+    const exifData = document.getElementById('exif-data');
+    const toggleIcon = document.getElementById('exif-toggle');
+    
+    if (exifData.style.display === 'none') {
+        exifData.style.display = 'block';
+        toggleIcon.textContent = '▲';
+    } else {
+        exifData.style.display = 'none';
+        toggleIcon.textContent = '▼';
+    }
+}
+</script>
+{% endblock %}
