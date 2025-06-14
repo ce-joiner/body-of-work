@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block title %}Upload Photos - {{ project.title }}{% endblock %}
 
@@ -13,60 +14,81 @@
         <h1 class="page-title">Upload Photos</h1>
         <p class="page-subtitle">Add photos to "{{ project.title }}"</p>
     </div>
-    
+
     <div style="max-width: 800px; margin: 0 auto;">
         <div class="card">
             <div class="card-header">
                 <h2 class="card-title">Add Photos to Your Project</h2>
             </div>
-            
+
             <!-- Upload Form -->
-            <form method="post" enctype="multipart/form-data" id="photo-upload-form">
+            <form method="post" enctype="multipart/form-data" id="photo-upload-form"
+                  action="{% url 'projects:photo_upload' project.pk %}">
                 {% csrf_token %}
-                
+
                 <!-- Upload Mode Toggle -->
                 <div class="upload-mode-toggle">
                     <div class="btn-group">
                         <input type="radio" class="btn-check" name="upload_mode" id="single_mode" value="single" checked>
                         <label class="btn" for="single_mode">Single Photo</label>
-                        
+
                         <input type="radio" class="btn-check" name="upload_mode" id="bulk_mode" value="bulk">
                         <label class="btn" for="bulk_mode">Multiple Photos</label>
                     </div>
                 </div>
-                
+
                 <!-- Single Photo Upload -->
                 <div id="single-upload-section">
                     <div class="form-group">
                         <label for="{{ form.image.id_for_label }}" class="form-label">Photo</label>
-                        {{ form.image }}
-                        <div class="form-text" style="font-size: 0.9rem; color: #6c757d; margin-top: 0.5rem;">
+                        {{ form.image|add_class:"form-control" }}
+                        {% if form.image.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.image.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
                             Select a photo to upload (max 50MB)
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="{{ form.title.id_for_label }}" class="form-label">Title (Optional)</label>
-                        {{ form.title }}
-                        <div class="form-text" style="font-size: 0.9rem; color: #6c757d; margin-top: 0.5rem;">
+                        {{ form.title|add_class:"form-control" }}
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.title.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
                             Leave blank to auto-generate from filename
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="{{ form.caption.id_for_label }}" class="form-label">Caption (Optional)</label>
-                        {{ form.caption }}
+                        {{ form.caption|add_class:"form-control" }}
+                        {% if form.caption.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.caption.errors }}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
-                
+
                 <!-- Bulk Photo Upload -->
                 <div id="bulk-upload-section" style="display: none;">
                     <div class="form-group">
-                        <label class="form-label">Select Multiple Photos</label>
+                        <label for="bulk-photos" class="file-input-label">
+                            <span class="file-input-icon">📸</span>
+                            <strong>Choose images</strong>
+                            <br><small>Click to select files</small>
+                        </label>
                         <input type="file" 
                                name="photos" 
-                               id="bulk-photos"
-                               class="form-control"
+                               id="bulk-photos" 
+                               class="file-input" 
+                               style="display: none;"
                                multiple 
                                accept="image/jpeg,image/jpg,image/png,image/tiff,image/webp,image/heic">
                         <div class="form-text" style="font-size: 0.9rem; color: #6c757d; margin-top: 0.5rem;">
@@ -74,30 +96,20 @@
                             <small>Supports: JPEG, PNG, TIFF, WEBP, HEIC (iPhone photos)</small>
                         </div>
                     </div>
-                    
-                    <!-- File List Preview -->
-                    <div id="file-list" class="file-list" style="display: none;">
-                        <h6 style="margin-bottom: 1rem;">Selected Files:</h6>
-                        <div id="file-items" class="file-items">
-                            <!-- Files will be listed here -->
-                        </div>
-                    </div>
                 </div>
-                
+
                 <!-- Upload Progress -->
                 <div id="upload-progress" class="upload-progress" style="display: none;">
                     <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
-                        <div class="spinner" style="width: 20px; height: 20px; border: 2px solid #f3f3f3; border-top: 2px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 0.5rem;"></div>
+                        <div class="spinner"></div>
                         <span>Uploading photos...</span>
                     </div>
                     <div class="progress">
                         <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                             role="progressbar" 
-                             style="width: 0%">
-                        </div>
+                             role="progressbar" style="width: 0%"></div>
                     </div>
                 </div>
-                
+
                 <!-- Submit Button -->
                 <div style="display: flex; flex-direction: column; gap: 1rem;">
                     <button type="submit" class="btn btn-primary btn-full-width" id="upload-btn">
@@ -109,7 +121,7 @@
                 </div>
             </form>
         </div>
-        
+
         <!-- Upload Tips -->
         <div class="card">
             <div class="card-header">
@@ -126,136 +138,106 @@
         </div>
     </div>
 </div>
-
-<style>
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-</style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Get form elements
-    const form = document.getElementById('photo-upload-form');
-    const singleMode = document.getElementById('single_mode');
-    const bulkMode = document.getElementById('bulk_mode');
-    const singleSection = document.getElementById('single-upload-section');
-    const bulkSection = document.getElementById('bulk-upload-section');
-    const bulkPhotosInput = document.getElementById('bulk-photos');
-    const fileList = document.getElementById('file-list');
-    const fileItems = document.getElementById('file-items');
-    const uploadProgress = document.getElementById('upload-progress');
-    const uploadBtn = document.getElementById('upload-btn');
-    
-    // Handle upload mode toggle
-    function toggleUploadMode() {
-        if (singleMode.checked) {
-            singleSection.style.display = 'block';
-            bulkSection.style.display = 'none';
-            uploadBtn.innerHTML = 'Upload Photo';
-        } else {
-            singleSection.style.display = 'none';
-            bulkSection.style.display = 'block';
-            uploadBtn.innerHTML = 'Upload Photos';
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get form elements
+        const form = document.getElementById('photo-upload-form');
+        const singleMode = document.getElementById('single_mode');
+        const bulkMode = document.getElementById('bulk_mode');
+        const singleSection = document.getElementById('single-upload-section');
+        const bulkSection = document.getElementById('bulk-upload-section');
+        const bulkPhotosInput = document.getElementById('bulk-photos');
+        const singlePhotoInput = document.querySelector('#single-upload-section input[type="file"]');
+        const uploadProgress = document.getElementById('upload-progress');
+        const uploadBtn = document.getElementById('upload-btn');
+
+        // Handle upload mode toggle
+        function toggleUploadMode() {
+    if (singleMode.checked) {
+        singleSection.style.display = 'block';
+        bulkSection.style.display = 'none';
+        uploadBtn.innerHTML = 'Upload Photo';
+        
+        // Make single input required when in single mode
+        if (singlePhotoInput) {
+            singlePhotoInput.required = true;
+        }
+    } else {
+        singleSection.style.display = 'none';
+        bulkSection.style.display = 'block';
+        uploadBtn.innerHTML = 'Upload Photos';
+        
+        // Make single input NOT required when in bulk mode
+        if (singlePhotoInput) {
+            singlePhotoInput.required = false;
         }
     }
-    
-    // Event listeners for mode toggle
-    singleMode.addEventListener('change', toggleUploadMode);
-    bulkMode.addEventListener('change', toggleUploadMode);
-    
-    // Handle bulk file selection
-    bulkPhotosInput.addEventListener('change', function() {
-        const files = this.files;
-        
-        if (files.length === 0) {
-            fileList.style.display = 'none';
-            return;
+}
+        // Event listeners for mode toggle
+        singleMode.addEventListener('change', toggleUploadMode);
+        bulkMode.addEventListener('change', toggleUploadMode);
+
+        // Validate file types and sizes before upload
+        function validateFiles(files) {
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/tiff', 'image/heic', 'image/heif'];
+            const maxSize = 50 * 1024 * 1024; // 50MB
+            const errors = [];
+
+            Array.from(files).forEach(function (file) {
+                if (!allowedTypes.includes(file.type)) {
+                    errors.push(`${file.name}: Unsupported file type`);
+                }
+                if (file.size > maxSize) {
+                    errors.push(`${file.name}: File too large (max 50MB)`);
+                }
+            });
+
+            if (errors.length > 0) {
+                alert('Upload errors:\n' + errors.join('\n'));
+                return false;
+            }
+
+            return true;
         }
-        
-        // Show file list
-        fileList.style.display = 'block';
-        fileItems.innerHTML = '';
-        
-        // Add each file to the list
-        Array.from(files).forEach(function(file, index) {
-            const fileItem = document.createElement('div');
-            fileItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-            
-            // File info
-            const fileInfo = document.createElement('div');
-            fileInfo.innerHTML = `
-                <strong>${file.name}</strong><br>
-                <small class="text-muted">${formatFileSize(file.size)} • ${file.type}</small>
-            `;
-            
-            // File status
-            const fileStatus = document.createElement('span');
-            fileStatus.className = 'badge bg-secondary';
-            fileStatus.textContent = 'Ready';
-            
-            fileItem.appendChild(fileInfo);
-            fileItem.appendChild(fileStatus);
-            fileItems.appendChild(fileItem);
-        });
-    });
-    
-    // Handle form submission
+
+        // Handle form submission
     form.addEventListener('submit', function(e) {
+        if (bulkMode.checked) {
+            // Validate bulk files
+            if (bulkPhotosInput.files.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one photo to upload.');
+                return false;
+            }
+
+            if (!validateFiles(bulkPhotosInput.files)) {
+                e.preventDefault();
+                return false;
+            }
+        }
+
         // Show upload progress
         uploadProgress.style.display = 'block';
         uploadBtn.disabled = true;
         uploadBtn.innerHTML = '⏳ Uploading...';
     });
-    
-    // Utility function to format file sizes
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        // Use 1024 for binary file size calculation (standard in computing)
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        // Math.log(bytes) / Math.log(k) gives us the power of k
-        // Math.floor() rounds down to get the appropriate unit index
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        
-        // Convert bytes to the appropriate unit and format
-        // Math.pow(k, i) = k^i (e.g., 1024^2 for MB)
-        // (bytes / Math.pow(k, i)) gives the numeric value in that unit
-        // .toFixed(2) rounds to 2 decimal places
-        // parseFloat() removes trailing zeros (e.g., "2.00" becomes "2")
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
-    
-    // Validate file types and sizes before upload
-    function validateFiles(files) {
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/tiff', 'image/heic'];
-        const maxSize = 50 * 1024 * 1024; // 50MB
-        const errors = [];
-        
-        Array.from(files).forEach(function(file) {
-            if (!allowedTypes.includes(file.type)) {
-                errors.push(`${file.name}: Unsupported file type`);
-            }
-            if (file.size > maxSize) {
-                errors.push(`${file.name}: File too large (max 50MB)`);
-            }
-        });
-        
-        if (errors.length > 0) {
-            alert('Upload errors:\n' + errors.join('\n'));
-            return false;
+
+        // Initialize main.js preview system for bulk input
+        if (bulkPhotosInput) {
+            bulkPhotosInput.addEventListener('change', function () {
+                console.log('Bulk input changed, files:', this.files.length);
+            });
         }
-        
-        return true;
-    }
-    
-    // Add file validation to bulk input
-    bulkPhotosInput.addEventListener('change', function() {
-        validateFiles(this.files);
+
+        // Initialize preview for single input too
+        if (singlePhotoInput) {
+            singlePhotoInput.addEventListener('change', function () {
+                console.log('Single input changed, files:', this.files.length);
+            });
+        }
     });
-});
 </script>
 {% endblock %}

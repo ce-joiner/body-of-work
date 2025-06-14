@@ -12,6 +12,7 @@ exifread = "*"
 python-decouple = "*"
 django-ratelimit = "*"
 psycopg2-binary = "*"
+django-widget-tweaks = "*"
 
 [dev-packages]
 

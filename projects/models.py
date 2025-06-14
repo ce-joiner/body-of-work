@@ -72,6 +72,13 @@ class Project(models.Model):
         if self.target_end:
             return timezone.now().date() > self.target_end
         return False
+    
+    # Get positive number of days overdue
+    def days_overdue(self):
+        if self.target_end and self.is_overdue():
+            delta = timezone.now().date() - self.target_end
+            return delta.days
+        return 0
 
     def days_until_target(self):
         # Calculate days until target end date

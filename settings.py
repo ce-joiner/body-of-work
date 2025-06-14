@@ -13,12 +13,16 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+from decouple import Config, RepositoryEnv
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
 
 # Configure decouple to read from the correct .env location
-from decouple import Config, RepositoryEnv
+
 env_file = BASE_DIR / '.env'
 if env_file.exists():
     config = Config(RepositoryEnv(str(env_file)))
@@ -26,10 +30,6 @@ else:
     # Fallback to default decouple behavior
     from decouple import config
     print(f"Warning: .env file not found at {env_file}")
-
-# Quick test to verify .env is being read
-print(f"Loading .env from: {env_file}")
-print(f"CLOUDINARY_CLOUD_NAME loaded: {config('CLOUDINARY_CLOUD_NAME', default='NOT_LOADED')[:10]}...")
 
 
 # Quick-start development settings - unsuitable for production
@@ -53,13 +53,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Third party apps
     'cloudinary_storage',
     'cloudinary',
-    
-    # Local apps 
     'users',
     'projects',
+    'widget_tweaks',  # For better form rendering
 ]
 
 MIDDLEWARE = [
@@ -142,6 +140,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -158,7 +158,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 # MEDIA_ROOT = BASE_DIR / "media"
 # Use Cloudinary for media files (user uploads)
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Cloudinary configuration
 CLOUDINARY_STORAGE = {
@@ -166,34 +166,39 @@ CLOUDINARY_STORAGE = {
     'API_KEY': config('CLOUDINARY_API_KEY'),
     'API_SECRET': config('CLOUDINARY_API_SECRET'),
 }
+cloudinary.config(
+    cloud_name=config('CLOUDINARY_CLOUD_NAME'),
+    api_key=config('CLOUDINARY_API_KEY'),
+    api_secret=config('CLOUDINARY_API_SECRET'),
+    secure=True
+)
 
 # Use Cloudinary for media storage in production
 # Storage configuration for Django 5.0+
-if not DEBUG or config('USE_CLOUDINARY', default=False, cast=bool):
-    STORAGES = {
-        "default": {
-            "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
-        },
-        "staticfiles": {
-            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-        },
-    }
-else:
-    # Use local storage for development
-    MEDIA_ROOT = BASE_DIR / 'media'
-    STORAGES = {
-        "default": {
-            "BACKEND": "django.core.files.storage.FileSystemStorage",
-        },
-        "staticfiles": {
-            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-        },
-    }
+# if not DEBUG or config('USE_CLOUDINARY', default=False, cast=bool):
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+# else:
+#     # Use local storage for development
+#     MEDIA_ROOT = BASE_DIR / 'media'
+#     STORAGES = {
+#         "default": {
+#             "BACKEND": "django.core.files.storage.FileSystemStorage",
+#         },
+#         "staticfiles": {
+#             "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+#         },
+#     }
 
 # File upload settings
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 20971520  # 20MB
-ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/tiff', 'image/webp']
 MAX_UPLOAD_SIZE = 50 * 1024 * 1024  # 50MB
 
 # Allowed image types
@@ -214,8 +219,6 @@ CSRF_COOKIE_HTTPONLY = True
 if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Login/Logout redirect URLs
 LOGIN_URL = 'users:login'

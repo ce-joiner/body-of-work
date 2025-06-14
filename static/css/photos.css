@@ -289,6 +289,109 @@
     font-size: 0.75rem;
 }
 
+/* Image Preview Styles */
+.image-preview {
+    margin-top: 1rem;
+    text-align: center;
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+.image-preview img {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Multiple Image Preview Container */
+.image-preview-container {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+/* Preview Grid */
+.preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Individual Preview Item */
+.preview-item {
+    position: relative;
+    text-align: center;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background-color: white;
+    transition: transform 0.2s ease;
+}
+
+.preview-item:hover {
+    transform: scale(1.05);
+}
+
+.preview-item img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.preview-filename {
+    font-size: 0.8rem;
+    color: #6c757d;
+    word-break: break-word;
+    line-height: 1.2;
+}
+
+/* Remove Button */
+.remove-btn {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(220, 53, 69, 0.9);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: background-color 0.2s ease;
+}
+
+.remove-btn:hover {
+    background-color: rgba(220, 53, 69, 1);
+}
+
+/* File Input Label States */
+.file-input-label.selected {
+    border-color: #28a745 !important;
+    background-color: #d4edda !important;
+    color: #155724 !important;
+}
+
+.file-input-label.default {
+    border-color: #ced4da !important;
+    background-color: #f8f9fa !important;
+    color: #495057 !important;
+}
+
 /* Upload Progress */
 .upload-progress {
     background: white;
@@ -324,6 +427,31 @@
 @keyframes progress-bar-stripes {
     0% { background-position: 1rem 0; }
     100% { background-position: 0 0; }
+}
+
+/* Upload Progress Spinner */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+}
+
+/* Upload Progress Container */
+.upload-progress {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #f8f9fa;
 }
 
 /* Photo Detail Page Styles */
@@ -579,6 +707,7 @@
     opacity: 0.5;
 }
 
+
 /* Responsive Design */
 @media (max-width: 992px) {
     .photo-grid {
@@ -631,6 +760,7 @@
     .photo-display img {
         max-height: 50vh;
     }
+
 }
 
 /* Animation for smooth interactions */

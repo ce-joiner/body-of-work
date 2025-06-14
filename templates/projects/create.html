@@ -1,0 +1,88 @@
+<!-- projects/templates/projects/create.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create New Project{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div class="page-header">
+        <h1 class="page-title">Create New Project</h1>
+        <p class="page-subtitle">Start organizing a body of work</p>
+    </div>
+
+    <div class="form-container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}" class="form-label">Project Title</label>
+                {{ form.title }}
+                {% if form.title.help_text %}
+                    <div class="form-text">{{ form.title.help_text }}</div>
+                {% endif %}
+                {% if form.title.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.title.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                {{ form.description }}
+                {% if form.description.help_text %}
+                    <div class="form-text">{{ form.description.help_text }}</div>
+                {% endif %}
+                {% if form.description.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.description.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.target_end.id_for_label }}" class="form-label">Target End Date (Optional)</label>
+                {{ form.target_end }}
+                {% if form.target_end.help_text %}
+                    <div class="form-text">{{ form.target_end.help_text }}</div>
+                {% endif %}
+                {% if form.target_end.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.target_end.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.cover_photo.id_for_label }}" class="form-label">Cover Photo (Optional)</label>
+                {{ form.cover_photo }}
+                {% if form.cover_photo.help_text %}
+                    <div class="form-text">{{ form.cover_photo.help_text }}</div>
+                {% endif %}
+                {% if form.cover_photo.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.cover_photo.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full-width">
+                 Create Project
+            </button>
+            
+            <a href="{% url 'projects:list' %}" class="btn btn-secondary btn-full-width">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

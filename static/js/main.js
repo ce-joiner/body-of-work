@@ -71,72 +71,144 @@ function initializeForms() {
     });
 }
 
-// File upload preview functionality
+// File upload preview functionality (updated for multiple files with CSS classes)
 function handleFilePreview(input) {
-    const file = input.files[0];
-    if (!file) return;
+    const files = input.files;
+    if (!files || files.length === 0) return;
+    
+    // Store files in a way we can modify
+    input.selectedFiles = Array.from(files);
     
     // Update the label text if it exists
     const label = input.parentNode.querySelector('.file-input-label');
     if (label) {
-        label.innerHTML = `
-            <span class="file-input-icon">✅</span>
-            <strong>Selected:</strong> ${file.name}
-            <br><small>Click to change</small>
-        `;
-        label.style.borderColor = '#28a745';
-        label.style.backgroundColor = '#d4edda';
-        label.style.color = '#155724';
+        updateLabelText(label, input.selectedFiles.length);
     }
     
-    // If it's an image, show a preview (for later use with photo uploads)
-    if (file.type.startsWith('image/')) {
-        createImagePreview(file, input);
+    // Show previews for all selected images
+    createMultipleImagePreviews(input.selectedFiles, input);
+}
+
+// Update label text based on file count
+function updateLabelText(label, fileCount) {
+    if (fileCount === 0) {
+        label.innerHTML = `
+            <span class="file-input-icon">📸</span>
+            <strong>Choose images</strong>
+            <br><small>Click to select files</small>
+        `;
+        label.className = label.className.replace('selected', 'default');
+    } else if (fileCount === 1) {
+        label.innerHTML = `
+            <span class="file-input-icon">✅</span>
+            <strong>Selected:</strong> 1 image
+            <br><small>Click to change</small>
+        `;
+        label.className = label.className.replace('default', 'selected');
+    } else {
+        label.innerHTML = `
+            <span class="file-input-icon">✅</span>
+            <strong>Selected:</strong> ${fileCount} images
+            <br><small>Click to change</small>
+        `;
+        label.className = label.className.replace('default', 'selected');
     }
 }
 
-// Create image preview (useful for photo uploads later)
-function createImagePreview(file, input) {
+// Create multiple image previews for batch uploads
+function createMultipleImagePreviews(files, input) {
+    // Remove existing preview containers
+    const existingPreview = input.parentNode.querySelector('.image-preview-container');
+    if (existingPreview) {
+        existingPreview.remove();
+    }
+    
+    const oldPreview = input.parentNode.querySelector('.image-preview');
+    if (oldPreview) {
+        oldPreview.remove();
+    }
+    
+    // Don't show container if no files
+    if (files.length === 0) return;
+    
+    // Create main container for all previews
+    const previewContainer = document.createElement('div');
+    previewContainer.className = 'image-preview-container';
+    
+    // Create grid for multiple images
+    const previewGrid = document.createElement('div');
+    previewGrid.className = 'preview-grid';
+    
+    // Process each image file
+    files.forEach((file, index) => {
+        if (file.type.startsWith('image/')) {
+            createSingleImagePreview(file, previewGrid, index, input);
+        }
+    });
+    
+    previewContainer.appendChild(previewGrid);
+    input.parentNode.appendChild(previewContainer);
+}
+
+// Create preview for a single image with remove button
+function createSingleImagePreview(file, container, index, input) {
     const reader = new FileReader();
     
     reader.onload = function(e) {
-        // Remove existing preview
-        const existingPreview = input.parentNode.querySelector('.image-preview');
-        if (existingPreview) {
-            existingPreview.remove();
-        }
+        const previewItem = document.createElement('div');
+        previewItem.className = 'preview-item';
         
-        // Create container for the image preview
-        const preview = document.createElement('div');
-        preview.className = 'image-preview';
-        preview.style.cssText = `
-            margin-top: 1rem;
-            text-align: center;
-            padding: 1rem;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            background-color: #f8f9fa;
-        `;
-        // Create the actual image element
+        // Create remove button
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = '×';
+        removeBtn.type = 'button';
+        removeBtn.className = 'remove-btn';
+        
+        // Remove button click handler
+        removeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            removeFileFromSelection(input, index);
+        });
+        
         const img = document.createElement('img');
-        // e.target.result contains the file data as a data URL
         img.src = e.target.result;
-        img.style.cssText = `
-            max-width: 200px;
-            max-height: 200px;
-            border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        `;
+        img.alt = file.name;
         
-        preview.appendChild(img);
-        // Add the preview container next to the file input
-        // input.parentNode gets the parent element
-        input.parentNode.appendChild(preview);
+        const filename = document.createElement('div');
+        filename.className = 'preview-filename';
+        filename.textContent = file.name.length > 20 ? 
+            file.name.substring(0, 17) + '...' : file.name;
+        
+        previewItem.appendChild(removeBtn);
+        previewItem.appendChild(img);
+        previewItem.appendChild(filename);
+        container.appendChild(previewItem);
     };
-
-    // Start reading the file and convert it to a data URL (to be displayed in an <img> tag)
-    // This triggers the reader.onload function above when complete
+    
     reader.readAsDataURL(file);
+}
+
+// Remove a file from the selection
+function removeFileFromSelection(input, indexToRemove) {
+    // Remove the file from our custom array
+    input.selectedFiles.splice(indexToRemove, 1);
+    
+    // Update the actual file input (create new FileList)
+    const dt = new DataTransfer();
+    input.selectedFiles.forEach(file => {
+        dt.items.add(file);
+    });
+    input.files = dt.files;
+    
+    // Update the label
+    const label = input.parentNode.querySelector('.file-input-label');
+    if (label) {
+        updateLabelText(label, input.selectedFiles.length);
+    }
+    
+    // Recreate previews
+    createMultipleImagePreviews(input.selectedFiles, input);
 }
 
 // Add loading state to forms and prevent double submission

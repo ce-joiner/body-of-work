@@ -21,39 +21,39 @@
 {% if projects %}
     <div class="project-grid">
         {% for project in projects %}
-            <div class="project-card">
-                <div class="project-cover">
-                    {% if project.cover_photo %}
-                        <img src="{{ project.cover_photo.url }}" alt="{{ project.title }}">
-                    {% else %}
-                        📸
-                    {% endif %}
-                </div>
+    <a href="{% url 'projects:detail' project.pk %}" style="text-decoration: none; color: inherit;">
+        <div class="project-card">
+            <div class="project-cover">
+                {% if project.cover_photo %}
+                    <img src="{{ project.cover_photo.url }}" alt="{{ project.title }}">
+                {% else %}
+                    📸
+                {% endif %}
+            </div>
+            
+            <div class="project-info">
+                <h3 class="project-title">
+                    {{ project.title }}
+                </h3>
                 
-                <div class="project-info">
-                    <h3 class="project-title">
-                        <a href="{% url 'projects:detail' project.pk %}" style="text-decoration: none; color: inherit;">
-                            {{ project.title }}
-                        </a>
-                    </h3>
-                    
-                    <p class="project-description">
-                        {{ project.description|default:"No description provided"|truncatewords:20 }}
-                    </p>
-                    
-                    <div class="project-meta">
-                        <span>Created {{ project.created|date:"M j, Y" }}</span>
-                        <span>
-                            {% if project.photos.count %}
-                                {{ project.photos.count }} photo{{ project.photos.count|pluralize }}
-                            {% else %}
-                                No photos yet
-                            {% endif %}
-                        </span>
-                    </div>
+                <p class="project-description">
+                    {{ project.description|default:"No description provided"|truncatewords:20 }}
+                </p>
+                
+                <div class="project-meta">
+                    <span>Created {{ project.created|date:"M j, Y" }}</span>
+                    <span>
+                        {% if project.photos.count %}
+                            {{ project.photos.count }} photo{{ project.photos.count|pluralize }}
+                        {% else %}
+                            No photos yet
+                        {% endif %}
+                    </span>
                 </div>
             </div>
-        {% endfor %}
+        </div>
+    </a>
+{% endfor %}
     </div>
 {% else %}
     <!-- Empty state when no projects exist -->
