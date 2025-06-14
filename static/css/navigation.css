@@ -1,0 +1,199 @@
+/* Navigation Styles for Body of Work */
+
+/* Header and Navigation */
+.header {
+    background: white;
+    color: #1a1a1a;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #1a1a1a;
+    letter-spacing: -0.025em;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.auth-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-greeting {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.logout-form {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+}
+
+.nav-link {
+    color: #6b7280;
+    text-decoration: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    transition: all 150ms ease-in-out;
+    border: none;
+    background: none;
+    font-size: 0.875rem;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.nav-link:hover {
+    background-color: #f7f8f9;
+    color: #1a1a1a;
+}
+
+.logout-btn {
+    color: #6b7280;
+}
+
+.logout-btn:hover {
+    background-color: #f7f8f9;
+    color: #dc2626;
+}
+
+/* Mobile Menu Button - compatible with main.js */
+.mobile-menu-button {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    border-radius: 6px;
+    transition: background-color 150ms ease-in-out;
+}
+
+.mobile-menu-button:hover {
+    background-color: #f7f8f9;
+}
+
+.hamburger-line {
+    width: 20px;
+    height: 2px;
+    background-color: #1a1a1a;
+    margin: 2px 0;
+    transition: all 200ms ease-in-out;
+}
+
+/* Mobile Navigation - compatible with main.js toggleMobileMenu() */
+.nav-menu.mobile-open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 1rem;
+    z-index: 50;
+}
+
+.nav-menu.mobile-open .nav-links,
+.nav-menu.mobile-open .user-menu,
+.nav-menu.mobile-open .auth-links {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.nav-menu.mobile-open .nav-link {
+    display: block;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f3f4f6;
+    width: 100%;
+    text-align: left;
+}
+
+.nav-menu.mobile-open .nav-link:last-child {
+    border-bottom: none;
+}
+
+.nav-menu.mobile-open .user-greeting {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e5e7eb;
+    font-weight: 600;
+}
+
+/* Footer */
+.footer {
+    background-color: white;
+    border-top: 1px solid #e5e7eb;
+    padding: 2rem 0;
+    margin-top: 4rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none;
+    }
+    
+    .mobile-menu-button {
+        display: flex;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+}

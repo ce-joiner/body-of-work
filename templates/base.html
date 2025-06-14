@@ -4,11 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Body of Work{% endblock %}</title>
+    <title>{% block title %}BODY OF WORK{% endblock %}</title>
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navigation.css' %}">
+    <link rel="stylesheet" href="{% static 'css/projects.css' %}">
     <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+    <link rel="stylesheet" href="{% static 'css/photos.css' %}">
+    <link rel="stylesheet" href="{% static 'css/photo-management.css' %}">
     
     <!-- Additional CSS that child templates can add -->
     {% block extra_css %}{% endblock %}
@@ -22,45 +26,57 @@
         <div class="nav-container">
             <!-- Logo/Brand -->
             <a href="{% url 'projects:list' %}" class="logo">
-                Body of Work
+                BODY OF WORK
             </a>
             
             <!-- Navigation Menu -->
             <nav class="nav-menu">
                 {% if user.is_authenticated %}
                     <!-- Authenticated user navigation -->
-                    <a href="{% url 'projects:list' %}" class="nav-link">
-                        My Projects
-                    </a>
-                    <a href="{% url 'projects:create' %}" class="nav-link btn-primary">
-                        New Project
-                    </a>
+                    <div class="nav-links">
+                        <a href="{% url 'projects:list' %}" class="nav-link">
+                            PROJECTS
+                        </a>
+                        <a href="{% url 'projects:create' %}" class="nav-link">
+                            NEW PROJECT
+                        </a>
+                    </div>
                     
                     <!-- User menu -->
-                    <span class="nav-link">
-                        Hey, {{ user.username }}
-                    </span>
-                    <a href="{% url 'users:profile' %}" class="nav-link">
-                        Profile
-                    </a>
-                        <!-- Logout form instead of link -->
-                        <form method="post" action="{% url 'users:logout' %}" style="display: inline-block; margin: 0;">
+                    <div class="user-menu">
+                        <span class="user-greeting">
+                            {{ user.first_name|default:user.username }}
+                        </span>
+                        <a href="{% url 'users:profile' %}" class="nav-link">
+                            PROFILE
+                        </a>
+                        <!-- Logout form -->
+                        <form method="post" action="{% url 'users:logout' %}" class="logout-form">
                             {% csrf_token %}
-                            <button type="submit" class="nav-link btn-secondary">
-                                Logout
+                            <button type="submit" class="nav-link logout-btn">
+                                SIGN OUT
                             </button>
                         </form>
                     </div>
                 {% else %}
                     <!-- Anonymous user navigation -->
-                    <a href="{% url 'users:login' %}" class="nav-link">
-                        Login
-                    </a>
-                    <a href="{% url 'users:register' %}" class="nav-link btn-primary">
-                        Sign Up
-                    </a>
+                    <div class="auth-links">
+                        <a href="{% url 'users:login' %}" class="nav-link">
+                            SIGN IN
+                        </a>
+                        <a href="{% url 'users:register' %}" class="btn btn-primary">
+                            GET STARTED
+                        </a>
+                    </div>
                 {% endif %}
             </nav>
+            
+            <!-- Mobile menu button - compatible with main.js -->
+            <button class="mobile-menu-button" aria-label="Toggle navigation">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
         </div>
     </header>
 
@@ -86,10 +102,12 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2025 Body of Work. </p>
+        <div class="footer-content">
+            <p>&copy; 2025 Body of Work</p>
+        </div>
     </footer>
 
-    <!-- JavaScript -->
+    <!-- JavaScript - main.js handles all functionality -->
     <script src="{% static 'js/main.js' %}"></script>
     
     <!-- Additional JS that child templates can add -->
