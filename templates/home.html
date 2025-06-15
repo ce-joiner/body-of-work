@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Body of Work - Photography Project Management{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-image">
+                <img src="{% static 'images/IMG_4388.jpeg' %}" 
+                     alt="Professional photography workspace" 
+                     loading="eager">
+            </div>
+            
+            <h1 class="hero-title">BODY OF WORK</h1>
+        </div>
+    </section>
+</div>
+{% endblock %}

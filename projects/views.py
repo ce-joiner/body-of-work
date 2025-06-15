@@ -16,13 +16,18 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
-from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView, TemplateView
 
 # Local app imports
 from .models import Project, Photo
 from .forms import ProjectForm, PhotoUploadForm, BulkPhotoUploadForm, PhotoEditForm, PhotoBulkActionForm
 from .utils import process_uploaded_photo, handle_upload_error
 
+
+# home page view
+class HomeView(TemplateView):
+    template_name = 'home.html'
+    
 
 # list all projects for current user
 class ProjectListView(LoginRequiredMixin, ListView):

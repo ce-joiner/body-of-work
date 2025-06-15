@@ -25,7 +25,7 @@
     <header class="header">
         <div class="nav-container">
             <!-- Logo/Brand -->
-            <a href="{% url 'projects:list' %}" class="logo">
+            <a href="{% url 'home' %}" class="logo">
                 BODY OF WORK
             </a>
             
@@ -44,11 +44,8 @@
                     
                     <!-- User menu -->
                     <div class="user-menu">
-                        <span class="user-greeting">
-                            {{ user.first_name|default:user.username }}
-                        </span>
-                        <a href="{% url 'users:profile' %}" class="nav-link">
-                            PROFILE
+                        <a href="{% url 'users:profile' %}" class="nav-link user-profile-link">
+                        {{ user.first_name|default:user.username }}
                         </a>
                         <!-- Logout form -->
                         <form method="post" action="{% url 'users:logout' %}" class="logout-form">
