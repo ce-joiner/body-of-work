@@ -1,0 +1,210 @@
+/* Drag Handle Styling */
+.drag-handle {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    cursor: grab;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 200ms ease-in-out;
+    user-select: none;
+}
+
+.drag-handle:hover {
+    background: rgba(0, 0, 0, 0.9);
+    cursor: grab;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+/* Show drag handle on photo card hover */
+.photo-card:hover .drag-handle {
+    opacity: 1;
+}
+
+/* Always show drag handles when dragging is active */
+.photo-dragging .drag-handle {
+    opacity: 1 !important;
+}
+
+/* SortableJS Classes */
+.sortable-ghost {
+    opacity: 0.5;
+    background: #f0f0f0;
+    border: 2px dashed #374151;
+    transform: rotate(2deg);
+}
+
+.sortable-chosen {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.sortable-drag {
+    transform: rotate(5deg);
+    opacity: 0.9;
+}
+
+/* Photo card enhancements for dragging */
+.photo-card {
+    position: relative;
+    transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out;
+    cursor: default;
+}
+
+/* Disable pointer events on images during drag */
+.photo-dragging .photo-card img {
+    pointer-events: none;
+}
+
+/* Disable text selection during drag */
+.photo-dragging {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Loading indicator for reordering */
+.reorder-loading-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    border: 1px solid #e5e7eb;
+}
+
+.reorder-loading-indicator .loading-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #374151;
+    font-weight: 500;
+}
+
+.reorder-loading-indicator .spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #f3f4f6;
+    border-top: 3px solid #374151;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Photo grid enhancements for better drag experience */
+.photo-grid {
+    min-height: 200px; /* Ensure there's always space for dropping */
+}
+
+/* Style improvements for mobile drag & drop */
+@media (max-width: 768px) {
+    .drag-handle {
+        width: 28px;
+        height: 36px;
+        font-size: 14px;
+        opacity: 1; /* Always visible on mobile */
+        background: rgba(0, 0, 0, 0.8);
+    }
+    
+    .photo-card:hover .drag-handle {
+        opacity: 1;
+    }
+    
+    /* Larger touch targets for mobile */
+    .sortable-chosen {
+        transform: scale(1.05);
+    }
+    
+    .reorder-loading-indicator {
+        width: 90%;
+        max-width: 300px;
+        padding: 1.5rem;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .drag-handle {
+        background: black;
+        border: 1px solid white;
+    }
+    
+    .sortable-ghost {
+        border-color: black;
+        background: white;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .photo-card,
+    .drag-handle,
+    .sortable-chosen,
+    .sortable-ghost {
+        transition: none;
+        animation: none;
+        transform: none !important;
+    }
+    
+    .reorder-loading-indicator .spinner {
+        animation: none;
+        border-top-color: transparent;
+    }
+}
+
+/* Focus states for accessibility */
+.drag-handle:focus {
+    outline: 2px solid #374151;
+    outline-offset: 2px;
+}
+
+/* Visual feedback for successful reorder */
+.photo-card.reorder-success {
+    animation: reorderSuccess 600ms ease-in-out;
+}
+
+@keyframes reorderSuccess {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); background-color: #d1fae5; }
+    100% { transform: scale(1); background-color: transparent; }
+}
+
+/* Improved drag preview */
+.sortable-drag {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Placeholder styling when dragging */
+.sortable-ghost .photo-image img {
+    opacity: 0.3;
+}
+
+.sortable-ghost .photo-info {
+    opacity: 0.5;
+}

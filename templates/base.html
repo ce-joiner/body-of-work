@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{% static 'css/forms.css' %}">
     <link rel="stylesheet" href="{% static 'css/photos.css' %}">
     <link rel="stylesheet" href="{% static 'css/photo-management.css' %}">
+    <link rel="stylesheet" href="{% static 'css/drag-drop.css' %}">
     
     <!-- Additional CSS that child templates can add -->
     {% block extra_css %}{% endblock %}
@@ -104,10 +105,13 @@
         </div>
     </footer>
 
-    <!-- JavaScript - main.js handles all functionality -->
+    <!-- JavaScript - main.js handles most functionality -->
     <script src="{% static 'js/main.js' %}"></script>
+
+    <!-- Photo management modules -->
+     <script src="{% static 'js/photo-selection.js' %}"></script>
+    <script src="{% static 'js/photo-reordering.js' %}"></script>
     
-    <!-- Additional JS that child templates can add -->
     {% block extra_js %}{% endblock %}
 </body>
 </html>

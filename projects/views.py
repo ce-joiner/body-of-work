@@ -388,3 +388,105 @@ def photos_bulk_action(request, project_id):
             messages.success(request, f"Removed featured status from {count} photo{'s' if count != 1 else ''}.")
 
     return redirect('projects:detail', pk=project.id)
+
+@login_required
+@csrf_protect
+@require_POST
+def photo_reorder(request, project_id):
+    """Handle AJAX requests to reorder photos within a project"""
+    try:
+        project = get_object_or_404(Project, id=project_id)
+        
+        # Check permissions
+        if project.owner != request.user:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'You do not have permission to reorder photos in this project.'
+            }, status=403)
+        
+        # Parse JSON data
+        try:
+            data = json.loads(request.body)
+            photo_ids = data.get('photo_ids', [])
+        except (json.JSONDecodeError, KeyError) as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Invalid JSON data provided.'
+            }, status=400)
+        
+        if not photo_ids or not isinstance(photo_ids, list):
+            return JsonResponse({
+                'status': 'error',
+                'message': 'No photo IDs provided or invalid format.'
+            }, status=400)
+        
+        # Convert to integers and validate
+        try:
+            photo_ids = [int(pid) for pid in photo_ids]
+        except (ValueError, TypeError):
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Invalid photo ID format.'
+            }, status=400)
+        
+        # Get photos that belong to this project and validate all IDs exist
+        project_photos = Photo.objects.filter(project=project)
+        project_photo_ids = set(project_photos.values_list('id', flat=True))
+        
+        # Verify all provided IDs belong to this project
+        provided_ids = set(photo_ids)
+        if not provided_ids.issubset(project_photo_ids):
+            invalid_ids = provided_ids - project_photo_ids
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Some photo IDs do not belong to this project: {list(invalid_ids)}'
+            }, status=400)
+        
+        # Update order in a database transaction
+        with transaction.atomic():
+            # Create a mapping of photo ID to new order index
+            order_updates = []
+            
+            for new_index, photo_id in enumerate(photo_ids):
+                try:
+                    photo = Photo.objects.get(id=photo_id, project=project)
+                    photo.order_index = new_index
+                    order_updates.append(photo)
+                except Photo.DoesNotExist:
+                    continue
+            
+            # Bulk update for better performance
+            Photo.objects.bulk_update(order_updates, ['order_index'])
+            
+            # Set order_index for any photos not in the provided list
+            # (in case some photos were missed)
+            remaining_photos = Photo.objects.filter(
+                project=project
+            ).exclude(
+                id__in=photo_ids
+            ).order_by('uploaded_at')
+            
+            next_index = len(photo_ids)
+            for photo in remaining_photos:
+                photo.order_index = next_index
+                next_index += 1
+            
+            if remaining_photos.exists():
+                Photo.objects.bulk_update(list(remaining_photos), ['order_index'])
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': f'Successfully reordered {len(photo_ids)} photos.',
+            'reordered_count': len(photo_ids)
+        })
+        
+    except Exception as e:
+        # Log the error for debugging
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error in photo_reorder view: {str(e)}", exc_info=True)
+        
+        return JsonResponse({
+            'status': 'error',
+            'message': 'An unexpected error occurred. Please try again.'
+        }, status=500)

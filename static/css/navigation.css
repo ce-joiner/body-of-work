@@ -84,6 +84,10 @@
     color: #1a1a1a;
 }
 
+.user-profile-link {
+    font-weight: 600; /* Make username slightly bolder */
+}
+
 .logout-btn {
     color: #6b7280;
 }

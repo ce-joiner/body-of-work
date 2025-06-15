@@ -248,20 +248,22 @@ function initializeNavigation() {
     // Loop through each navigation link
     navLinks.forEach(function(link) {
         if (link.getAttribute('href') === currentPath) {
-            // Highlight the active link with background color and rounded corners
-            link.style.backgroundColor = 'rgba(255,255,255,0.2)';
+            // Use existing hover styles for active state
+            link.style.backgroundColor = '#f7f8f9'; 
+            link.style.color = '#1a1a1a'; 
             link.style.borderRadius = '6px';
+            link.classList.add('nav-active'); // Add class for CSS styling
         }
     });
     
-    // Mobile menu toggle (add hamburger menu later)
+    // Mobile menu toggle 
     const mobileMenuButton = document.querySelector('.mobile-menu-button');
     if (mobileMenuButton) {
         mobileMenuButton.addEventListener('click', toggleMobileMenu);
     }
 }
 
-// Mobile menu toggle function (for future use)
+// Mobile menu toggle function 
 function toggleMobileMenu() {
     const navMenu = document.querySelector('.nav-menu');
     if (navMenu) {
@@ -269,44 +271,6 @@ function toggleMobileMenu() {
     }
 }
 
-// Utility functions for later use
-// Creates notifications that slide in from the right
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `alert alert-${type}`;
-    notification.textContent = message;
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-        min-width: 300px;
-        opacity: 0;
-        transform: translateX(100%);
-        transition: all 0.3s ease;
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Animate in
-    setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateX(0)';
-    }, 100);
-    
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateX(100%)';
-        
-        // Remove from DOM after animation
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
-    }, 5000);
-}
 
 // CSRF token helper for AJAX requests (will need this later)
 function getCookie(name) {
