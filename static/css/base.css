@@ -117,14 +117,14 @@ a:focus {
 
 /* Layout containers */
 .main-container {
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 2rem 1.5rem;
     min-height: calc(100vh - 140px);
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 0 1.5rem;
 }

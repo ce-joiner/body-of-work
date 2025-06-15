@@ -1,43 +1,50 @@
 /* Drag Handle Styling */
+
 .drag-handle {
     position: absolute;
     top: 8px;
     right: 8px;
-    width: 24px;
-    height: 32px;
-    background: rgba(0, 0, 0, 0.7);
+    width: 20px;
+    height: 28px;
+    background: rgba(0, 0, 0, 0.4); /* More subtle default background */
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
+    border-radius: 3px;
     cursor: grab;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: bold;
     line-height: 1;
-    z-index: 10;
-    opacity: 0;
-    transition: opacity 200ms ease-in-out;
+    z-index: 15; /* Higher than photo actions */
+    opacity: 0.6; /* Subtle but visible */
+    transition: all 200ms ease-in-out;
     user-select: none;
+    backdrop-filter: blur(2px);
 }
 
 .drag-handle:hover {
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.8);
+    opacity: 1;
     cursor: grab;
+    transform: scale(1.1);
 }
 
 .drag-handle:active {
     cursor: grabbing;
+    transform: scale(1.05);
 }
 
-/* Show drag handle on photo card hover */
+/* More prominent on photo card hover */
 .photo-card:hover .drag-handle {
     opacity: 1;
+    background: rgba(0, 0, 0, 0.7);
 }
 
 /* Always show drag handles when dragging is active */
 .photo-dragging .drag-handle {
     opacity: 1 !important;
+    background: rgba(0, 0, 0, 0.9) !important;
 }
 
 /* SortableJS Classes */
@@ -123,11 +130,13 @@
 /* Style improvements for mobile drag & drop */
 @media (max-width: 768px) {
     .drag-handle {
-        width: 28px;
-        height: 36px;
-        font-size: 14px;
-        opacity: 1; /* Always visible on mobile */
-        background: rgba(0, 0, 0, 0.8);
+        width: 24px;
+        height: 32px;
+        font-size: 12px;
+        opacity: 0.8; /* More visible on mobile */
+        background: rgba(0, 0, 0, 0.6);
+        top: 6px;
+        right: 6px;
     }
     
     .photo-card:hover .drag-handle {
@@ -196,7 +205,7 @@
 /* Improved drag preview */
 .sortable-drag {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
 }
 

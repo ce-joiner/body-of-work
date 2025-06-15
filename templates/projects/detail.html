@@ -106,20 +106,14 @@
                     <input type="checkbox" class="photo-select" value="{{ photo.id }}">
                 </div>
 
-                <!-- Photo Image -->
+                <!-- Photo Image - Use natural aspect ratio thumbnail -->
                 <div class="photo-image">
-                    <img src="{{ photo.thumbnail_url|default:photo.image.url }}"
-                        alt="{{ photo.title|default:'Untitled' }}" loading="lazy"
-                        onclick="openPhotoDetail({{ photo.id }})">
+                    <img src="{{ photo.natural_thumbnail_url|default:photo.image.url }}"
+                        alt="{{ photo.title|default:'Untitled' }}" loading="lazy">
                 </div>
 
-                <!-- Photo Info -->
+                <!-- Photo Info - Overlay with click handlers -->
                 <div class="photo-info">
-                    <h6 class="photo-title">{{ photo.title|default:"Untitled"|truncatechars:30 }}</h6>
-                    {% if photo.caption %}
-                    <p class="photo-caption">{{ photo.caption|truncatechars:50 }}</p>
-                    {% endif %}
-
                     <!-- Photo Status Badges -->
                     <div class="photo-badges">
                         {% if photo.is_featured %}
@@ -130,7 +124,16 @@
                         {% endif %}
                     </div>
 
-                    <!-- Photo Actions -->
+                    <!-- Clickable Photo Title -->
+                    <h6 class="photo-title" onclick="openPhotoDetail({{ photo.id }})">
+                        {{ photo.title|default:"Untitled"|truncatechars:30 }}
+                    </h6>
+                    
+                    {% if photo.caption %}
+                    <p class="photo-caption">{{ photo.caption|truncatechars:50 }}</p>
+                    {% endif %}
+
+                    <!-- Photo Actions - Now inside photo-info -->
                     <div class="photo-actions">
                         <a href="{% url 'projects:photo_detail' photo.id %}" class="btn btn-outline-primary">View</a>
                         <a href="{% url 'projects:photo_edit' photo.id %}" class="btn btn-outline-secondary">Edit</a>
