@@ -2,6 +2,7 @@ from django import forms
 from .models import Project, Photo
 from .utils import validate_image_file
 from django.core.exceptions import ValidationError
+from cloudinary.models import CloudinaryResource
 
 # Form for creating and editing projects
 class ProjectForm(forms.ModelForm):
@@ -44,7 +45,18 @@ class ProjectForm(forms.ModelForm):
     
     def clean_cover_photo(self):
         cover_photo = self.cleaned_data.get('cover_photo')
-        if cover_photo:
+        
+        # If cover_photo is None or False, it means no new file was uploaded
+        # This keeps the existing photo (for editing)
+        if not cover_photo:
+            return cover_photo
+            
+        # allows existing Cloudinary resources to pass through without validation (for editing)
+        if isinstance(cover_photo, CloudinaryResource):
+            return cover_photo
+            
+        # Only validate new file uploads
+        if hasattr(cover_photo, 'size') and hasattr(cover_photo, 'content_type'):
             try:
                 validate_image_file(cover_photo)
             except ValidationError as e:

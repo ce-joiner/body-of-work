@@ -11,6 +11,14 @@
     border: 1px solid #e5e7eb;
 }
 
+.form-text {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+    display: block;
+    line-height: 1.4;
+}
+
 .form-header {
     text-align: center;
     margin-bottom: 2rem;
@@ -43,7 +51,7 @@
     margin-bottom: 0.5rem;
 }
 
-/* Form controls - single unified style */
+/* Form controls */
 .form-control {
     width: 100%;
     padding: 0.75rem 1rem;
@@ -65,6 +73,12 @@
 
 .form-control:hover {
     border-color: #9ca3af;
+}
+
+/* Full width button */
+.btn-full-width {
+    width: 100%;
+    margin-top: 1rem;
 }
 
 /* Textarea specific */
@@ -132,11 +146,15 @@ select.form-control {
     border-color: #059669;
 }
 
+/* Invalid feedback styling */
 .invalid-feedback {
-    display: block;
-    margin-top: 0.25rem;
-    font-size: 0.875rem;
     color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.invalid-feedback.d-block {
+    display: block;
 }
 
 .valid-feedback {
@@ -339,4 +357,30 @@ select.form-control {
     .file-input-label {
         padding: 1.5rem 1rem;
     }
+}
+
+/* Danger Zone Styling - Reusable across forms */
+.danger-zone-card {
+    border-color: #dc2626 !important;
+    margin-top: 1rem;
+}
+
+.danger-zone-content {
+    padding: .25rem;
+}
+
+.danger-zone-text {
+    color: #6b7280;
+    margin-bottom: 1rem;
+}
+
+.danger-zone-btn {
+    border-color: #dc2626 !important;
+    color: #dc2626 !important;
+    transition: all 150ms ease-in-out;
+}
+
+.danger-zone-btn:hover {
+    background-color: #dc2626 !important;
+    color: white !important;
 }

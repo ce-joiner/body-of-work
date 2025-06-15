@@ -4,10 +4,6 @@
 
 {% block title %}{{ project.title }}{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/photos.css' %}">
-{% endblock %}
-
 {% block content %}
 <div class="main-container">
     <!-- Project Header -->
@@ -46,10 +42,10 @@
                 <!-- Project Actions -->
                 <div class="flex gap-2" style="display: flex; gap: 1rem;">
                     <a href="{% url 'projects:photo_upload' project.pk %}" class="btn btn-primary">
-                        📸 Upload Photos
+                        Upload Photos
                     </a>
                     <a href="{% url 'projects:edit' project.pk %}" class="btn btn-secondary">
-                        ✏️ Edit Project
+                        Edit Project
                     </a>
                 </div>
             </div>

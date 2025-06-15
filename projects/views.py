@@ -143,26 +143,39 @@ def _process_photo_uploads(request, project):
     uploaded_files = request.FILES.getlist('photos')  # For bulk upload
     single_file = request.FILES.get('image')  # For single upload (corrected from 'photo')
     
+    
     if single_file and not uploaded_files:
         #single upload via PhotoUploadForm
         files_to_process = [single_file]
         upload_type = 'single'
         form = PhotoUploadForm(request.POST, request.FILES)
+        
     elif uploaded_files:
         #bulk upload via BulkPhotoUploadForm
         files_to_process = uploaded_files
         upload_type = 'bulk'
         form = BulkPhotoUploadForm(request.POST, request.FILES)
         
+       
         # ADDED: Manual validation for bulk files since form can't handle multiple files
         if len(files_to_process) > 20:
             messages.error(request, "Too many files selected. Maximum allowed: 20")
             return redirect('projects:photo_upload', project_id=project.id)
             
     else:
-        #no files to upload
+        # no files to upload
         messages.error(request, "Select at least one photo to upload.")
         return redirect('projects:photo_upload', project_id=project.id)
+        
+
+         # form validation
+    
+    if upload_type == 'single':
+        if not form.is_valid():
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+            return redirect('projects:photo_upload', project_id=project.id)
         
     # Only validate form for single uploads (bulk validation handled above)
     if upload_type == 'single' and not form.is_valid():
@@ -230,6 +243,7 @@ def _process_photo_uploads(request, project):
 
     if failure_count > 0:
         for failed in failed_uploads:
+            messages.error(request, f"Failed to upload '{failed['filename']}': {failed['error']}")
             messages.error(request, f"Failed to upload '{failed['filename']}': {failed['error']}")
 
     # Handle AJAX requests (for dynamic uploads without page reload)

@@ -167,6 +167,8 @@
     border-top: 1px solid #e5e7eb;
     padding: 2rem 0;
     margin-top: 4rem;
+    align-items: center;
+    justify-content: center;
 }
 
 .footer-content {
@@ -174,8 +176,8 @@
     margin: 0 auto;
     padding: 0 1.5rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center;
     color: #6b7280;
     font-size: 0.875rem;
 }

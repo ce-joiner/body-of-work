@@ -1,0 +1,148 @@
+/* Photo Edit Page Styles for Body of Work */
+
+/* Info Group Styling */
+.info-group {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.info-group:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.info-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+
+/* Form Check Styling */
+.form-check {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: #f7f8f9;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+.form-check-label {
+    font-weight: 500;
+    color: #1a1a1a;
+    cursor: pointer;
+}
+
+/* Photo Badges */
+.photo-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.photo-badges .badge {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Photo Edit Layout */
+.photo-edit-container {
+    display: flex;
+    gap: 2rem;
+}
+
+.photo-preview-section {
+    flex: 1;
+    max-width: 400px;
+}
+
+.photo-edit-section {
+    flex: 2;
+}
+
+.photo-technical-info {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f7f8f9;
+    border-radius: 8px;
+}
+
+.technical-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    font-size: 0.875rem;
+}
+
+.technical-info-label {
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.camera-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.camera-info-value {
+    margin: 0;
+    color: #1a1a1a;
+    font-weight: 500;
+}
+
+/* Current Status Card */
+.current-status-card {
+    background: #f7f8f9;
+    margin: 1.5rem 0;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Breadcrumb */
+.breadcrumb-card {
+    margin-bottom: 2rem;
+    padding: 1rem;
+}
+
+.breadcrumb-separator {
+    margin: 0 0.5rem;
+    color: #6c757d;
+}
+
+.breadcrumb-current {
+    color: #6c757d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .photo-edit-container {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    
+    .photo-preview-section {
+        max-width: none !important;
+    }
+    
+    .technical-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .camera-info-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -11,6 +11,7 @@ from PIL.ExifTags import TAGS
 import exifread
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from cloudinary.models import CloudinaryResource
 import io
 import logging
 
@@ -22,12 +23,27 @@ logger = logging.getLogger(__name__)
 
 
 def validate_image_file(uploaded_file):
+     # If it's an existing Cloudinary resource, skip validation
+    if isinstance(uploaded_file, CloudinaryResource):
+        return True
+    
+    # If it's a string (URL), also skip validation (existing image)
+    if isinstance(uploaded_file, str):
+        return True
+    
+    # Only validate actual file uploads
+    if not hasattr(uploaded_file, 'size') or not hasattr(uploaded_file, 'content_type'):
+        # If it doesn't have these attributes, it might be an existing resource
+        return True
+    
     # Check file size
     if uploaded_file.size > settings.MAX_UPLOAD_SIZE:
         raise ValidationError(
             f"File too large. Maximum size is {settings.MAX_UPLOAD_SIZE // (1024*1024)}MB. "
             f"Your file is {uploaded_file.size // (1024*1024)}MB."
         )
+    
+    
 
     # Check MIME type
     # Instead of generic error, shows specific message:
@@ -85,6 +101,18 @@ def extract_exif_data(uploaded_file):
 
 # Get image width and height
 def get_image_dimensions(uploaded_file):
+    """
+    Get image width and height.
+    Returns None for existing Cloudinary resources.
+    """
+    # Skip dimension extraction for existing Cloudinary resources
+    if isinstance(uploaded_file, (CloudinaryResource, str)):
+        return None, None
+        
+    # Only get dimensions from actual file uploads
+    if not hasattr(uploaded_file, 'seek'):
+        return None, None
+        
     try:
         uploaded_file.seek(0)
         with Image.open(uploaded_file) as img:
@@ -98,8 +126,12 @@ def get_image_dimensions(uploaded_file):
 
 # Generate a default title from filename
 def generate_photo_title(uploaded_file):
-    filename = uploaded_file.name
-    if filename:
+    # Handle existing Cloudinary resources
+    if isinstance(uploaded_file, (CloudinaryResource, str)):
+        return "Photo"
+    # Handle file uploads
+    if hasattr(uploaded_file, 'name') and uploaded_file.name:
+        filename = uploaded_file.name
         # Remove extension and clean up
         title = filename.rsplit('.', 1)[0]
         # Replace underscores and hyphens with spaces
@@ -123,8 +155,8 @@ def process_uploaded_photo(uploaded_file, project):
     # Prepare photo data
     photo_data = {
         'title': title,
-        'file_size': uploaded_file.size,
-        'mime_type': uploaded_file.content_type,
+        'file_size': getattr(uploaded_file, 'size', None),
+        'mime_type': getattr(uploaded_file, 'content_type', None),
         'width': width,
         'height': height,
         'exif_data': exif_data,
