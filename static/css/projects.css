@@ -1,7 +1,145 @@
+/* Project Hero Section */
+.project-hero {
+    width: 100vw; /* Full viewport width */
+    margin-left: calc(-50vw + 50%); /* Center and extend to full width */
+    margin-bottom: 3rem;
+    margin-top: -3rem;
+    border-radius: 0;
+}
+
+.hero-background {
+    position: relative;
+    width: 100%;
+    height: 300px; /* Reduced from 400px */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: flex-end; /* Changed from center to bottom */
+}
+
+/* Fallback for projects without cover photos */
+.hero-no-cover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.85) 100%);
+    display: flex;
+    align-items: flex-end; /* Position content at bottom */
+}
+
+.hero-content {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem 1.5rem; /* Match main container padding */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end; /* Align to bottom */
+    color: white;
+}
+
+.hero-info {
+    flex: 1;
+    max-width: 600px;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.project-hero .hero-content .hero-title {
+    color: #fefefe;
+}
+
+.hero-description {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+    opacity: 0.95;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 0;
+}
+
+.meta-item {
+    font-size: 1rem;
+    font-weight: 500;
+    opacity: 0.9;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.meta-overdue {
+    color: #fca5a5;
+}
+
+.meta-photos {
+    font-weight: 500;
+}
+
+.meta-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+.hero-actions .btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    text-shadow: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.hero-actions .btn-primary {
+    background: white;
+    color: #374151;
+    border: none;
+}
+
+.hero-actions .btn-primary:hover {
+    background: #f9fafb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.hero-actions .btn-secondary {
+    background: transparent;
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.hero-actions .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: white;
+    transform: translateY(-1px);
+}
+
+
 /* Project grid */
 .project-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
     margin-top: 2rem;
 }
@@ -22,7 +160,7 @@
 
 .project-cover {
     width: 100%;
-    height: 200px;
+    height: 180px;
     background: #f7f8f9;
     display: flex;
     align-items: center;
@@ -38,7 +176,7 @@
 }
 
 .project-info {
-    padding: 1.5rem;
+    padding: 1.25rem;
 }
 
 .project-title {
@@ -58,7 +196,7 @@
 .project-meta {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
     font-size: 0.75rem;
     color: #9ca3af;
 }
@@ -68,5 +206,42 @@
     .project-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
+    }
+
+    .project-hero {
+        margin-left: calc(-50vw + 50%);
+        margin-bottom: 2rem;
+    }
+    
+    .hero-background {
+        height: 250px; /* Shorter on mobile */
+    }
+    
+    .hero-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
+        padding: 2rem 1rem; /* Match mobile container padding */
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .hero-description {
+        font-size: 1.125rem;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-meta {
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+        max-width: 300px;
     }
 }

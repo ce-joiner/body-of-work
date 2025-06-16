@@ -6,45 +6,43 @@
 
 {% block content %}
 <div class="main-container" data-project-id="{{ project.id }}">
-    <!-- Project Header -->
-    <div class="page-header">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <div>
-                <h1 class="page-title">{{ project.title }}</h1>
-                <p class="page-subtitle">{{ project.description|default:"No description provided." }}</p>
+    <!-- Project Hero Section -->
+    <div class="project-hero">
+        {% if project.cover_photo %}
+            <div class="hero-background" style="background-image: url('{{ project.cover_photo.url }}');">
+        {% else %}
+            <div class="hero-background hero-no-cover">
+        {% endif %}
+            <div class="hero-overlay">
+                <div class="hero-content">
+                    <div class="hero-info">
+                        <h1 class="hero-title">{{ project.title }}</h1>
+                        <p class="hero-description">{{ project.description|default:"No description provided." }}</p>
+                        
+                        <!-- Project Status -->
+                        <div class="hero-meta">
+                            <span class="meta-item">Created {{ project.start_date|date:"F j, Y" }}</span>
+                            
+                            {% if project.target_end %}
+                                {% if project.is_overdue %}
+                                    <span class="meta-item meta-overdue">{{ project.days_overdue }} days overdue</span>
+                                {% else %}
+                                    <span class="meta-item">{{ project.days_until_target }} days remaining</span>
+                                {% endif %}
+                            {% endif %}
+                            
+                            <span class="meta-item">{{ project.photos.count }} photo{{ project.photos.count|pluralize }}</span>
+                        </div>
+                    </div>
 
-                <!-- Project Status -->
-                <div class="project-status" style="margin-top: 1rem;">
-                    <span class="status-badge status-created">
-                        📅 Created {{ project.start_date|date:"M j, Y" }}
-                    </span>
-                    
-                    {% if project.target_end %}
-                        {% if project.is_overdue %}
-                            <span class="status-badge status-overdue">
-                                ⚠️ Overdue by {{ project.days_overdue }} days
-                            </span>
-                        {% else %}
-                            <span class="status-badge status-on-track">
-                                ⏰ {{ project.days_until_target }} days remaining
-                            </span>
-                        {% endif %}
-                    {% endif %}
-                    
-                    <span class="status-badge status-photos">
-                        📸 {{ project.photos.count }} photo{{ project.photos.count|pluralize }}
-                    </span>
-                </div>
-            </div>
-
-            <div class="project-actions">
-                <div style="display: flex; gap: 1rem;">
-                    <a href="{% url 'projects:photo_upload' project.pk %}" class="btn btn-primary">
-                        Upload Photos
-                    </a>
-                    <a href="{% url 'projects:edit' project.pk %}" class="btn btn-secondary">
-                        Edit Project
-                    </a>
+                    <div class="hero-actions">
+                        <a href="{% url 'projects:photo_upload' project.pk %}" class="btn btn-primary">
+                            Upload Photos
+                        </a>
+                        <a href="{% url 'projects:edit' project.pk %}" class="btn btn-secondary">
+                            Edit Project
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -55,11 +53,11 @@
     <div class="photo-gallery-section">
         <!-- Gallery Controls -->
         <div class="gallery-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h2 class="card-title">Photos ({{ project.photos.count }})</h2>
+            <h2 class="card-title">Photos</h2>
             
-            <!-- Drag Instructions (managed by photo-reordering.js) -->
+            <!-- Clean Drag Instructions -->
             <div class="drag-instructions" style="color: #6b7280; font-size: 0.875rem;">
-                <span id="drag-hint">💡 Drag photos to reorder them</span>
+                <span id="drag-hint">Drag photos to reorder them</span>
             </div>
 
             <!-- Bulk Actions -->
@@ -106,7 +104,7 @@
                     <input type="checkbox" class="photo-select" value="{{ photo.id }}">
                 </div>
 
-                <!-- Photo Image - Use natural aspect ratio thumbnail -->
+                <!-- Photo Image - Uses natural aspect ratio thumbnail -->
                 <div class="photo-image">
                     <img src="{{ photo.natural_thumbnail_url|default:photo.image.url }}"
                         alt="{{ photo.title|default:'Untitled' }}" loading="lazy">

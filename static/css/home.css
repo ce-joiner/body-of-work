@@ -18,6 +18,7 @@
     padding: 0;
     margin: 0;
     width: 100%;
+    max-width: 1600px;
     position: relative;
     overflow: hidden;
 }
@@ -25,7 +26,7 @@
 
 .hero-content {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1600px;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -40,6 +41,7 @@
 
 .hero-image {
     width: 100%;
+    max-width: 1600px;
     height: 60vh;
     position: relative;
     margin-bottom: 0.5rem;
@@ -50,6 +52,7 @@
 
 .hero-image img {
     width: 100%;
+    max-width: 1600px;
     height: 100%;
     object-fit: cover;
     object-position: center;
@@ -64,13 +67,15 @@
     color: #1a1a1a; 
     line-height: 0.8;
     margin: 0;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.15em;
     text-align: center;
     text-transform: uppercase;
     text-shadow: none;
     mix-blend-mode: normal;
     width: 100%; 
     max-width: 100%; /* Allow full stretch */
+    white-space: nowrap; /* Prevent line breaks */
+    overflow: hidden; /* Hide any overflow */
 }
 
 /* Responsive Design */
@@ -80,8 +85,8 @@
     }
     
     .hero-title {
-        font-size: 4rem;
-        letter-spacing: 0.03em;
+        font-size: 3rem;
+        letter-spacing: 0.08em;
     }
     
     .hero-section {
@@ -99,10 +104,18 @@
 
 @media (max-width: 480px) {
     .hero-title {
-        font-size: 2.5rem;
+        font-size: 2rem;
+        letter-spacing: 0.05em;
     }
     
     .hero-image {
         height: 40vh;
+    }
+}
+
+@media (max-width: 320px) {
+    .hero-title {
+        font-size: 1.5rem; /* Very small screens */
+        letter-spacing: 0.03em;
     }
 }

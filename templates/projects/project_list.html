@@ -8,74 +8,82 @@
     <div class="flex justify-between items-center">
         <div>
             <h1 class="page-title">My Projects</h1>
-            <p class="page-subtitle">Organize and manage your photography projects</p>
+            <p class="page-subtitle">
+                {{ projects.count }} active project{{ projects.count|pluralize }} •
+                Last updated
+                {% if projects %}
+                {{ projects.first.updated|date:"M j, Y" }}
+                {% else %}
+                never
+                {% endif %}
+            </p>
         </div>
-        <a href="{% url 'projects:create' %}" class="btn btn-primary">
-            New Project
-        </a>
     </div>
 </div>
 {% endblock %}
 
 {% block content %}
 {% if projects %}
-    <div class="project-grid">
-        {% for project in projects %}
+<div class="project-grid">
+    {% for project in projects %}
     <a href="{% url 'projects:detail' project.pk %}" style="text-decoration: none; color: inherit;">
         <div class="project-card">
-            <div class="project-cover">
-                {% if project.cover_photo %}
-                    <img src="{{ project.cover_photo.url }}" alt="{{ project.title }}">
-                {% else %}
-                    📸
-                {% endif %}
-            </div>
-            
-            <div class="project-info">
-                <h3 class="project-title">
-                    {{ project.title }}
-                </h3>
-                
-                <p class="project-description">
-                    {{ project.description|default:"No description provided"|truncatewords:20 }}
-                </p>
-                
-                <div class="project-meta">
-                    <span>Created {{ project.created|date:"M j, Y" }}</span>
-                    <span>
-                        {% if project.photos.count %}
-                            {{ project.photos.count }} photo{{ project.photos.count|pluralize }}
-                        {% else %}
-                            No photos yet
-                        {% endif %}
-                    </span>
-                </div>
-            </div>
-        </div>
-    </a>
-{% endfor %}
+    <div class="project-cover">
+        {% if project.cover_photo %}
+        <img src="{{ project.cover_photo.url }}" alt="{{ project.title }}">
+        {% else %}
+        📸
+        {% endif %}
     </div>
-{% else %}
-    <!-- Empty state when no projects exist -->
-    <div class="empty-state">
-        <div class="empty-state-icon">📸</div>
-        <h2 class="empty-state-title">No Projects Yet</h2>
-        <p class="empty-state-text">
-            Create your first photography project to start organizing your shots, 
-            collaborating with your team, and managing your workflow.
+
+    <div class="project-info">
+        <h3 class="project-title">
+            {{ project.title }}
+        </h3>
+
+        <p class="project-description">
+            {{ project.description|default:"No description provided"|truncatewords:15 }}
         </p>
-        <a href="{% url 'projects:create' %}" class="btn btn-primary">
-            Create Your First Project
-        </a>
+
+        <div class="project-meta">
+            <div class="meta-dates">
+                <span>Created {{ project.created|date:"M j, Y" }}</span>
+                <span>Updated {{ project.updated|date:"M j, Y" }}</span>
+            </div>
+            <span class="meta-photos">
+                {% if project.photos.count %}
+                    {{ project.photos.count }} photo{{ project.photos.count|pluralize }}
+                {% else %}
+                    No photos yet
+                {% endif %}
+            </span>
+        </div>
     </div>
+</div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<!-- Empty state when no projects exist -->
+<div class="empty-state">
+    <div class="empty-state-icon">📸</div>
+    <h2 class="empty-state-title">No Projects Yet</h2>
+    <p class="empty-state-text">
+        Create your first photography project to start organizing your shots,
+        collaborating with your team, and managing your workflow.
+    </p>
+    <a href="{% url 'projects:create' %}" class="btn btn-primary">
+        Create Your First Project
+    </a>
+</div>
 {% endif %}
 {% endblock %}
 
 {% block extra_css %}
 <style>
-/* Project-specific styles can go here */
-.project-card:hover .project-title a {
-    color: #667eea;
-}
+    /* Project-specific styles can go here */
+    .project-card:hover .project-title a {
+        color: #667eea;
+    }
 </style>
 {% endblock %}
