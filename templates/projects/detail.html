@@ -9,149 +9,150 @@
     <!-- Project Hero Section -->
     <div class="project-hero">
         {% if project.cover_photo %}
-            <div class="hero-background" style="background-image: url('{{ project.cover_photo.url }}');">
-        {% else %}
+        <div class="hero-background" style="background-image: url('{{ project.cover_photo.url }}');">
+            {% else %}
             <div class="hero-background hero-no-cover">
-        {% endif %}
-            <div class="hero-overlay">
-                <div class="hero-content">
-                    <div class="hero-info">
-                        <h1 class="hero-title">{{ project.title }}</h1>
-                        <p class="hero-description">{{ project.description|default:"No description provided." }}</p>
-                        
-                        <!-- Project Status -->
-                        <div class="hero-meta">
-                            <span class="meta-item">Created {{ project.start_date|date:"F j, Y" }}</span>
-                            
-                            {% if project.target_end %}
+                {% endif %}
+                <div class="hero-overlay">
+                    <div class="hero-content">
+                        <div class="hero-info">
+                            <h1 class="hero-title">{{ project.title }}</h1>
+                            <p class="hero-description">{{ project.description|default:"No description provided." }}</p>
+
+                            <!-- Project Status -->
+                            <div class="hero-meta">
+                                <span class="meta-item">Created {{ project.start_date|date:"F j, Y" }}</span>
+
+                                {% if project.target_end %}
                                 {% if project.is_overdue %}
-                                    <span class="meta-item meta-overdue">{{ project.days_overdue }} days overdue</span>
+                                <span class="meta-item meta-overdue">{{ project.days_overdue }} days overdue</span>
                                 {% else %}
-                                    <span class="meta-item">{{ project.days_until_target }} days remaining</span>
+                                <span class="meta-item">{{ project.days_until_target }} days remaining</span>
                                 {% endif %}
-                            {% endif %}
-                            
-                            <span class="meta-item">{{ project.photos.count }} photo{{ project.photos.count|pluralize }}</span>
+                                {% endif %}
+                                <span class="meta-item">{{ project.photos.count }} photo{% if project.photos.count != 1 %}s{% endif %}</span>
+                            </div>
+                        </div>
+
+                        <div class="hero-actions">
+                            <a href="{% url 'projects:photo_upload' project.pk %}" class="btn btn-primary">
+                                Upload Photos
+                            </a>
+                            <a href="{% url 'projects:edit' project.pk %}" class="btn btn-secondary">
+                                Edit Project
+                            </a>
                         </div>
                     </div>
-
-                    <div class="hero-actions">
-                        <a href="{% url 'projects:photo_upload' project.pk %}" class="btn btn-primary">
-                            Upload Photos
-                        </a>
-                        <a href="{% url 'projects:edit' project.pk %}" class="btn btn-secondary">
-                            Edit Project
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Photo Gallery Section -->
-    {% if project.photos.exists %}
-    <div class="photo-gallery-section">
-        <!-- Gallery Controls -->
-        <div class="gallery-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h2 class="card-title">Photos</h2>
-            
-            <!-- Bulk Actions -->
-            <div class="bulk-actions" id="bulk-actions" style="display: none;">
-                <form method="post" action="{% url 'projects:photos_bulk_action' project.pk %}" id="bulk-form">
-                    {% csrf_token %}
-                    <div class="input-group">
-                        <select name="action" class="form-control" id="bulk-action-select">
-                            <option value="">Bulk action...</option>
-                            <option value="feature">Mark as featured</option>
-                            <option value="unfeature">Remove featured</option>
-                            <option value="flag">Mark needs attention</option>
-                            <option value="unflag">Remove attention flag</option>
-                            <option value="delete">Delete permanently</option>
-                        </select>
-                        <button type="submit" class="btn btn-primary" id="bulk-submit">
-                            Apply to <span id="selected-count">0</span> photos
-                        </button>
-                    </div>
-                    <input type="hidden" name="photo_ids" id="bulk-photo-ids">
-                </form>
+        <!-- Photo Gallery Section -->
+        {% if project.photos.exists %}
+        <div class="photo-gallery-section">
+            <!-- Gallery Controls -->
+            <div class="gallery-header"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 class="card-title">Photos</h2>
+
+                <!-- Bulk Actions -->
+                <div class="bulk-actions" id="bulk-actions" style="display: none;">
+                    <form method="post" action="{% url 'projects:photos_bulk_action' project.pk %}" id="bulk-form">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <select name="action" class="form-control" id="bulk-action-select">
+                                <option value="">Bulk action...</option>
+                                <option value="feature">Mark as featured</option>
+                                <option value="unfeature">Remove featured</option>
+                                <option value="flag">Mark needs attention</option>
+                                <option value="unflag">Remove attention flag</option>
+                                <option value="delete">Delete permanently</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary" id="bulk-submit">
+                                Apply to <span id="selected-count">0</span> photos
+                            </button>
+                        </div>
+                        <input type="hidden" name="photo_ids" id="bulk-photo-ids">
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <!-- Selection Controls -->
-        <div class="selection-controls">
-            <button type="button" class="btn btn-outline-primary" id="select-all">
-                Select All
-            </button>
-            <button type="button" class="btn btn-outline-secondary" id="select-none">
-                Select None
-            </button>
-            <span class="selection-status">
-                <span id="selection-status">Click photos to select them, drag and drop to reorder</span>
-            </span>
-        </div>
+            <!-- Selection Controls -->
+            <div class="selection-controls">
+                <button type="button" class="btn btn-outline-primary" id="select-all">
+                    Select All
+                </button>
+                <button type="button" class="btn btn-outline-secondary" id="select-none">
+                    Select None
+                </button>
+                <span class="selection-status">
+                    <span id="selection-status">Click photos to select them, drag and drop to reorder</span>
+                </span>
+            </div>
 
-        <!-- Photo Grid -->
-        <div class="photo-grid" id="photo-grid">
-            {% for photo in project.photos.all|dictsort:"order_index" %}
-            <div class="photo-card" data-photo-id="{{ photo.id }}">
-                <!-- Selection Checkbox -->
-                <div class="photo-checkbox">
-                    <input type="checkbox" class="photo-select" value="{{ photo.id }}">
-                </div>
+            <!-- Photo Grid -->
+            <div class="photo-grid" id="photo-grid">
+                {% for photo in project.photos.all|dictsort:"order_index" %}
+                <div class="photo-card" data-photo-id="{{ photo.id }}">
+                    <!-- Selection Checkbox -->
+                    <div class="photo-checkbox">
+                        <input type="checkbox" class="photo-select" value="{{ photo.id }}">
+                    </div>
 
-                <!-- Photo Image - Uses natural aspect ratio thumbnail -->
-                <div class="photo-image">
-                    <img src="{{ photo.natural_thumbnail_url|default:photo.image.url }}"
-                        alt="{{ photo.title|default:'Untitled' }}" loading="lazy">
-                </div>
+                    <!-- Photo Image - Uses natural aspect ratio thumbnail -->
+                    <div class="photo-image">
+                        <img src="{{ photo.natural_thumbnail_url|default:photo.image.url }}"
+                            alt="{{ photo.title|default:'Untitled' }}" loading="lazy">
+                    </div>
 
-                <!-- Photo Info - Overlay with click handlers -->
-                <div class="photo-info">
-                    <!-- Photo Status Badges -->
-                    <div class="photo-badges">
-                        {% if photo.is_featured %}
-                        <span class="badge bg-warning">⭐ Featured</span>
+                    <!-- Photo Info - Overlay with click handlers -->
+                    <div class="photo-info">
+                        <!-- Photo Status Badges -->
+                        <div class="photo-badges">
+                            {% if photo.is_featured %}
+                            <span class="badge bg-warning">⭐ Featured</span>
+                            {% endif %}
+                            {% if photo.needs_attention %}
+                            <span class="badge bg-danger">⚠️ Attention</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Clickable Photo Title -->
+                        <h6 class="photo-title" onclick="openPhotoDetail({{ photo.id }})">
+                            {{ photo.title|default:"Untitled"|truncatechars:30 }}
+                        </h6>
+
+                        {% if photo.caption %}
+                        <p class="photo-caption">{{ photo.caption|truncatechars:50 }}</p>
                         {% endif %}
-                        {% if photo.needs_attention %}
-                        <span class="badge bg-danger">⚠️ Attention</span>
-                        {% endif %}
-                    </div>
 
-                    <!-- Clickable Photo Title -->
-                    <h6 class="photo-title" onclick="openPhotoDetail({{ photo.id }})">
-                        {{ photo.title|default:"Untitled"|truncatechars:30 }}
-                    </h6>
-                    
-                    {% if photo.caption %}
-                    <p class="photo-caption">{{ photo.caption|truncatechars:50 }}</p>
-                    {% endif %}
-
-                    <!-- Photo Actions - Now inside photo-info -->
-                    <div class="photo-actions">
-                        <a href="{% url 'projects:photo_detail' photo.id %}" class="btn btn-outline-primary">View</a>
-                        <a href="{% url 'projects:photo_edit' photo.id %}" class="btn btn-outline-secondary">Edit</a>
+                        <!-- Photo Actions - Now inside photo-info -->
+                        <div class="photo-actions">
+                            <a href="{% url 'projects:photo_detail' photo.id %}"
+                                class="btn btn-outline-primary">View</a>
+                            <a href="{% url 'projects:photo_edit' photo.id %}"
+                                class="btn btn-outline-secondary">Edit</a>
+                        </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-state-icon">📸</div>
+            <h3 class="empty-state-title">No photos yet</h3>
+            <p class="empty-state-text">Start building your project by uploading some photos.</p>
+            <a href="{% url 'projects:photo_upload' project.pk %}" class="btn btn-primary">
+                Upload Your First Photos
+            </a>
+        </div>
+        {% endif %}
     </div>
-    {% else %}
-    <!-- Empty State -->
-    <div class="empty-state">
-        <div class="empty-state-icon">📸</div>
-        <h3 class="empty-state-title">No photos yet</h3>
-        <p class="empty-state-text">Start building your project by uploading some photos.</p>
-        <a href="{% url 'projects:photo_upload' project.pk %}" class="btn btn-primary">
-            Upload Your First Photos
-        </a>
-    </div>
-    {% endif %}
-</div>
-{% endblock %}
+    {% endblock %}
 
-{% block extra_js %}
-<!-- Include SortableJS from CDN -->
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-{% endblock %}
-
+    {% block extra_js %}
+    <!-- Include SortableJS from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    {% endblock %}

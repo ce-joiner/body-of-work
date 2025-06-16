@@ -140,10 +140,10 @@ class PhotoEditForm(forms.ModelForm):
             'needs_attention': 'Mark this photo for attention',
             'is_featured': 'Feature this photo in project gallery',
         }
-        help_texts = {
-            'needs_attention': 'Flag this photo if it needs review or editing',
-            'is_featured': 'Featured photos appear prominently in the project',
-        }
+        # help_texts = {
+        #     'needs_attention': 'Flag this photo if it needs review or editing',
+        #     'is_featured': 'Featured photos appear prominently in the project',
+        # }
 
 # Form for bulk actions on multiple photos
 class PhotoBulkActionForm(forms.Form):

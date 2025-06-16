@@ -1,0 +1,118 @@
+<!-- projects/templates/projects/confirm_delete.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Delete {{ project.title }} - Body of Work{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/delete-confirmations.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <!-- Breadcrumb Navigation -->
+    <div class="card" style="margin-bottom: 2rem; padding: 1rem;">
+        <a href="{% url 'projects:list' %}" class="form-link">Projects</a>
+        <span style="margin: 0 0.5rem; color: #6c757d;">→</span>
+        <a href="{% url 'projects:detail' project.pk %}" class="form-link">{{ project.title }}</a>
+        <span style="margin: 0 0.5rem; color: #6c757d;">→</span>
+        <span style="color: #6c757d;">Delete</span>
+    </div>
+
+    <div class="delete-container">
+        <div class="delete-header">
+            <h1 class="delete-title">Delete Project</h1>
+            <p class="page-subtitle">This action will permanently remove your project and all its contents</p>
+        </div>
+
+        <!-- Project Preview -->
+        <div class="card delete-preview-section">
+            {% if project.cover_photo %}
+            <div class="delete-cover-photo">
+                <img src="{{ project.cover_photo.url }}" alt="{{ project.title }}">
+            </div>
+            {% endif %}
+
+            <div class="delete-project-info">
+                <h2 class="card-title">{{ project.title }}</h2>
+                {% if project.description %}
+                <p style="color: #6b7280; margin: 0;">{{ project.description|truncatewords:20 }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Project Statistics -->
+        <div class="card">
+            <h3 class="card-title">What will be deleted:</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">{{ project.photos.count }}</span>
+                    <span class="stat-label">Photo{{ project.photos.count|pluralize }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ project.created|date:"M j, Y" }}</span>
+                    <span class="stat-label">Created</span>
+                </div>
+                {% if project.target_end %}
+                <div class="stat-item">
+                    <span class="stat-number">{{ project.target_end|date:"M j" }}</span>
+                    <span class="stat-label">Target Date</span>
+                </div>
+                {% endif %}
+                <div class="stat-item">
+                    <span class="stat-number">{{ project.updated|date:"M j" }}</span>
+                    <span class="stat-label">Last Updated</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warning -->
+        <div class="card warning-card">
+            <div class="warning-icon">⚠️</div>
+            <div>
+                <h3 class="warning-title">This action cannot be undone</h3>
+                <p style="color: #991b1b; margin-bottom: 1rem;">
+                    Deleting "{{ project.title }}" will permanently remove:
+                </p>
+                <ul class="warning-list">
+                    <li>All {{ project.photos.count }} photo{{ project.photos.count|pluralize }} and metadata</li>
+                    <li>Project description, dates, and settings</li>
+                    <li>All image files from cloud storage</li>
+                </ul>
+                <p style="color: #991b1b; font-weight: 600; margin: 0;">
+                    This data cannot be recovered after deletion.
+                </p>
+            </div>
+        </div>
+
+        <!-- Confirmation Form -->
+        <div class="card">
+            <form method="post" id="delete-form">
+                {% csrf_token %}
+
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <button type="submit" class="btn btn-full-width btn-delete-confirm enabled" id="delete-button"
+                        data-project-title="{{ project.title }}" data-photo-count="{{ project.photos.count }}">
+                        Delete Project Permanently
+                    </button>
+
+                    <a href="{% url 'projects:detail' project.pk %}" class="btn btn-secondary btn-full-width">
+                        Cancel - Keep Project
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Safe Navigation -->
+        <div style="text-align: center; padding: 1rem 0; border-top: 1px solid #e5e7eb; margin-top: 2rem;">
+            <a href="{% url 'projects:edit' project.pk %}" class="form-link">← Edit Project Instead</a>
+            <span style="margin: 0 1rem; color: #d1d5db;">•</span>
+            <a href="{% url 'projects:list' %}" class="form-link">Back to Projects</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/delete-confirmations.js' %}"></script>
+{% endblock %}

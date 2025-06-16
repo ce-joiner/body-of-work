@@ -311,9 +311,11 @@ def photo_edit(request, photo_id):
     return render(request, 'projects/photo_edit.html', context)
         
 # Delete a photo from a project
+# uses JS confirmation to prevent accidental deletions, no template needed, handles GET and POST the same way
 @login_required
-@csrf_protect
+@csrf_protect  
 def photo_delete(request, photo_id):
+ 
     photo = get_object_or_404(Photo, id=photo_id)
     
     # Check permission
@@ -321,22 +323,25 @@ def photo_delete(request, photo_id):
         messages.error(request, "You don't have permission to delete this photo.")
         return redirect('projects:detail', pk=photo.project.id)
     
-    if request.method == 'POST':
-        photo_title = photo.title
-        project_id = photo.project.id
-        
-        # Delete the photo (Cloudinary cleanup happens automatically)
-        photo.delete()
-        
-        messages.success(request, f"Deleted '{photo_title}' successfully!")
+    # Store info before deletion
+    photo_title = photo.title or "Untitled"
+    project_id = photo.project.id
+    
+    # Delete the photo immediately
+    photo.delete()
+    
+    messages.success(request, f"Deleted '{photo_title}' successfully!")
+    
+    # Check if request came from photo detail page or project page
+    referer = request.META.get('HTTP_REFERER', '')
+    if f'/photos/{photo_id}/' in referer:
+        # Came from photo detail page, redirect to project
+        return redirect('projects:detail', pk=project_id)
+    else:
+        # Came from project page, redirect back to project
         return redirect('projects:detail', pk=project_id)
     
-    context = {
-        'photo': photo,
-        'project': photo.project,
-    }
-    return render(request, 'projects/photo_confirm_delete.html', context)
-   
+
 # Bulk actions for photos in a project
 @login_required
 @csrf_protect

@@ -115,8 +115,8 @@ class Photo(models.Model):
     exif_data = models.JSONField(blank=True, null=True, help_text="Camera EXIF data")
     
     # Workflow fields
-    needs_attention = models.BooleanField(default=False, help_text="Mark for review")
-    is_featured = models.BooleanField(default=False, help_text="Feature in project gallery")
+    needs_attention = models.BooleanField(default=False)
+    is_featured = models.BooleanField(default=False)
     
     # Ordering
     order_index = models.PositiveIntegerField(default=0, help_text="Display order")

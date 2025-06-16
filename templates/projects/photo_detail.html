@@ -20,9 +20,8 @@
         <div style="flex: 2;">
             <div class="card" style="padding: 1rem;">
                 <div class="photo-display">
-                    <img src="{{ photo.image.url }}" 
-                         alt="{{ photo.title|default:'Photo' }}"
-                         style="max-width: 100%; max-height: 70vh; border-radius: 8px;">
+                    <img src="{{ photo.image.url }}" alt="{{ photo.title|default:'Photo' }}"
+                        style="max-width: 100%; max-height: 70vh; border-radius: 8px;">
                 </div>
             </div>
 
@@ -31,13 +30,13 @@
                 <button class="btn btn-secondary" onclick="history.back()">
                     ← Back to Project
                 </button>
-                
+
                 <div style="display: flex; gap: 0.5rem;">
                     <a href="{% url 'projects:photo_edit' photo.id %}" class="btn btn-outline-primary">
-                         Edit
+                        Edit
                     </a>
-                    <a href="{% url 'projects:photo_delete' photo.id %}" class="btn btn-outline-secondary" 
-                       onclick="return confirm('Delete this photo permanently?')">
+                    <a href="{% url 'projects:photo_delete' photo.id %}" class="btn btn-outline-secondary"
+                        onclick="return confirmPhotoDelete('{{ photo.title|default:" Untitled"|escapejs }}')">
                         Delete
                     </a>
                 </div>
@@ -51,7 +50,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Photo Information</h3>
                 </div>
-                
+
                 <div class="info-group">
                     <label class="form-label">Title:</label>
                     <p>{{ photo.title|default:"Untitled" }}</p>
@@ -91,10 +90,10 @@
                     <label class="form-label">Status:</label>
                     <div class="photo-badges">
                         {% if photo.is_featured %}
-                            <span class="badge bg-warning">⭐ Featured</span>
+                        <span class="badge bg-warning">⭐ Featured</span>
                         {% endif %}
                         {% if photo.needs_attention %}
-                            <span class="badge bg-danger">⚠️ Needs Attention</span>
+                        <span class="badge bg-danger">⚠️ Needs Attention</span>
                         {% endif %}
                     </div>
                 </div>
@@ -106,7 +105,7 @@
                 <div class="card-header">
                     <h3 class="card-title">📸 Camera Settings</h3>
                 </div>
-                
+
                 {% if camera_info.make %}
                 <div class="info-group">
                     <label class="form-label">Camera:</label>
@@ -155,14 +154,15 @@
                 </div>
                 <div id="exif-data" style="display: none; max-height: 300px; overflow-y: auto; padding: 1rem;">
                     {% for key, value in photo.exif_data.items %}
-                        {% if value and key != "JPEGThumbnail" and key != "TIFFThumbnail" %}
-                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f1f1f1;">
-                            <small style="font-weight: bold; color: #6c757d;">{{ key }}:</small>
-                            <small>{{ value|truncatechars:40 }}</small>
-                        </div>
-                        {% endif %}
+                    {% if value and key != "JPEGThumbnail" and key != "TIFFThumbnail" %}
+                    <div
+                        style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f1f1f1;">
+                        <small style="font-weight: bold; color: #6c757d;">{{ key }}:</small>
+                        <small>{{ value|truncatechars:40 }}</small>
+                    </div>
+                    {% endif %}
                     {% empty %}
-                        <p style="color: #6c757d; margin: 0;">No technical data available</p>
+                    <p style="color: #6c757d; margin: 0;">No technical data available</p>
                     {% endfor %}
                 </div>
             </div>
@@ -174,18 +174,18 @@
 
 {% block extra_js %}
 <script>
-// Simple toggle for EXIF data
-function toggleExifData() {
-    const exifData = document.getElementById('exif-data');
-    const toggleIcon = document.getElementById('exif-toggle');
-    
-    if (exifData.style.display === 'none') {
-        exifData.style.display = 'block';
-        toggleIcon.textContent = '▲';
-    } else {
-        exifData.style.display = 'none';
-        toggleIcon.textContent = '▼';
+    // Simple toggle for EXIF data
+    function toggleExifData() {
+        const exifData = document.getElementById('exif-data');
+        const toggleIcon = document.getElementById('exif-toggle');
+
+        if (exifData.style.display === 'none') {
+            exifData.style.display = 'block';
+            toggleIcon.textContent = '▲';
+        } else {
+            exifData.style.display = 'none';
+            toggleIcon.textContent = '▼';
+        }
     }
-}
 </script>
 {% endblock %}
