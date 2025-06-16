@@ -3,13 +3,12 @@ Views for the users app
 """
 
 from django.contrib.auth import views as auth_views
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView, UpdateView
+from django.views.generic import CreateView, TemplateView, UpdateView, DeleteView
 from django.shortcuts import redirect
 from django.contrib import messages
-from .forms import ProfileEditForm
+from .forms import ProfileEditForm, UserCreationForm
 from .models import User
 
 # login view that redirects authenticated users
@@ -71,3 +70,23 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
     def form_invalid(self, form):
         messages.error(self.request, 'Please correct the errors below.')
         return super().form_invalid(form)
+    
+class AccountDeleteView(LoginRequiredMixin, DeleteView):
+    model = User
+    template_name = 'users/confirm_delete_account.html'
+    success_url = reverse_lazy('home')  # Redirect to home after deletion
+
+    def get_object(self):
+        # Always return the current user
+        return self.request.user
+    
+    def delete(self, request, *args, **kwargs):
+        user = self.get_object()
+        username = user.username
+        
+        # Delete the user (cascades to projects/photos, signals handle Cloudinary)
+        response = super().delete(request, *args, **kwargs)
+        
+        # Add success message for home page
+        messages.success(request, f'Account "{username}" has been permanently deleted.')
+        return response

@@ -1,8 +1,17 @@
 # users/forms.py
 from django import forms
 from django.contrib.auth.forms import UserChangeForm
+from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from .models import User
 
+
+class UserCreationForm(BaseUserCreationForm):
+    """Custom user creation form for our custom User model"""
+    class Meta:
+        model = User
+        fields = ("username",)
+
+        
 class ProfileEditForm(forms.ModelForm):
     
     class Meta:

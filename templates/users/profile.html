@@ -67,6 +67,18 @@
         </a>
     </div>
 </div>
+<!-- Danger Zone - Simple like project edit page -->
+<div class="card danger-zone-card">
+    <div class="danger-zone-content">
+        <p class="danger-zone-text">
+            Deleting your account will permanently remove all projects, photos, and data. This action cannot be undone.
+        </p>
+        <a href="{% url 'users:delete_account' %}" class="btn btn-outline-secondary danger-zone-btn">
+            Delete Account
+        </a>
+        
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_css %}
