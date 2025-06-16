@@ -40,6 +40,19 @@
     gap: 1.5rem;
 }
 
+.nav-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e5e7eb;
+    transition: border-color 150ms ease-in-out;
+}
+
+.nav-link:hover .nav-avatar {
+    border-color: #9ca3af;
+}
+
 .user-menu {
     display: flex;
     align-items: center;
@@ -86,6 +99,10 @@
 
 .user-profile-link {
     font-weight: 600; /* Make username slightly bolder */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px; /* Ensure consistent height whether text or image */
 }
 
 .logout-btn {

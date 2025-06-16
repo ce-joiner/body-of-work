@@ -155,14 +155,15 @@ class Photo(models.Model):
     def natural_thumbnail_url(self):
         """Generate thumbnail URL that preserves aspect ratio using Cloudinary transformations"""
         if self.image:
-            #'limit' crop mode to preserve aspect ratio, with a max width
             return self.image.build_url(
                 width=180,
-                crop='limit',  # This preserves aspect ratio
-                quality='auto:good',
-                fetch_format='auto'
+                crop='limit',
+                quality=100,  # Very high quality (0-100 scale)
+                format='jpg',  # Force JPEG for consistent quality
+                flags='progressive'  # Progressive JPEG loading
             )
         return None
+
     
     # Properties - computed attributes that act like fields but generate values dynamically
     # These can be accessed in templates like {{ photo.thumbnail_url }} without parentheses

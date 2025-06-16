@@ -2,17 +2,22 @@
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from cloudinary.models import CloudinaryField
 
 
 class User(AbstractUser):
     # AbstractUser includes username, password, email, first_name, last_name 
 
     # stores the user's profile picture (requires Pillow library)
-    avatar = models.ImageField(
-        upload_to='avatars/',
+    avatar = CloudinaryField(
+        'image',
         blank=True,
         null=True,
-        help_text="Profile picture"     
+        help_text="Profile picture",
+        transformation={
+            'quality': 'auto:good',
+            'fetch_format': 'auto',
+        }
     )
 
     bio = models.TextField(

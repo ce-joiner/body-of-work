@@ -5,7 +5,6 @@
 {% block page_header %}
 <div class="page-header">
     <h1 class="page-title">My Profile</h1>
-    <p class="page-subtitle">Manage your account settings</p>
 </div>
 {% endblock %}
 
@@ -14,6 +13,15 @@
     <div class="card-header">
         <h2 class="card-title">Account Information</h2>
     </div>
+    
+    <!-- Profile Picture Section -->
+    {% if user.avatar %}
+    <div style="text-align: center; margin: 1.5rem 0;">
+        <img src="{{ user.avatar.url }}" 
+             alt="Profile picture" 
+             style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #e5e7eb;">
+    </div>
+    {% endif %}
     
     <div class="profile-info">
         <div class="form-group">
@@ -30,6 +38,13 @@
             <label class="form-label">Full Name</label>
             <p class="profile-value">{{ user.get_full_name|default:"Not provided" }}</p>
         </div>
+
+        {% if user.bio %}
+        <div class="form-group">
+            <label class="form-label">Bio</label>
+            <p class="profile-value">{{ user.bio }}</p>
+        </div>
+        {% endif %}
         
         <div class="form-group">
             <label class="form-label">Member Since</label>
@@ -38,19 +53,18 @@
         
         <div class="form-group">
             <label class="form-label">Projects</label>
-            <p class="profile-value">{{ user.project_set.count }} project{{ user.project_set.count|pluralize }}</p>
+            <p class="profile-value">{{ user.owned_projects.count }} project{{ user.owned_projects.count|pluralize }}</p>
         </div>
     </div>
     
     <div class="profile-actions">
-        <a href="{% url 'projects:list' %}" class="btn btn-primary">
-            Back to Projects
+        <a href="{% url 'users:profile_edit' %}" class="btn btn-primary">
+            Edit Profile
         </a>
         
-        <!-- You can add edit profile functionality later -->
-        <button class="btn btn-secondary" disabled>
-            Edit Profile (Coming Soon)
-        </button>
+        <a href="{% url 'projects:list' %}" class="btn btn-secondary">
+            Back to Projects
+        </a>
     </div>
 </div>
 {% endblock %}

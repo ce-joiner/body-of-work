@@ -6,9 +6,10 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, TemplateView, UpdateView
 from django.shortcuts import redirect
 from django.contrib import messages
+from .forms import ProfileEditForm
 from .models import User
 
 # login view that redirects authenticated users
@@ -52,3 +53,21 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         context['user'] = self.request.user
         # Add more profile data here later
         return context
+
+class ProfileEditView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = ProfileEditForm
+    template_name = 'users/profile_edit.html'
+    success_url = reverse_lazy('users:profile')
+
+    def get_object(self):
+        # Always return the current user
+        return self.request.user
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Your profile has been updated successfully!')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Please correct the errors below.')
+        return super().form_invalid(form)

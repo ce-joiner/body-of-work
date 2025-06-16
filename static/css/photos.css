@@ -30,21 +30,20 @@
 .photo-image {
     position: relative;
     overflow: hidden;
-    cursor: default; /* Remove pointer cursor since image isn't clickable */
+    cursor: default;
     background: #f7f8f9;
-    /* No height constraints - let images determine container height */
     width: 100%;
+    min-height: 120px; /* Ensure minimum height */
 }
 
 .photo-image img {
     width: 100%;
-    height: auto; /* Critical: let height be determined by aspect ratio */
-    max-width: 100%;
-    object-fit: none; /* Don't force any fitting - show image naturally */
+    height: auto;
+    object-fit: none; /* Don't force any fitting */
     display: block;
-    border-radius: 0; /* Remove rounded corners from images */
+    border-radius: 0;
     transition: transform 200ms ease-in-out;
-    pointer-events: none; /* Prevent clicking on image */
+    pointer-events: none;
 }
 
 .photo-image:hover img {

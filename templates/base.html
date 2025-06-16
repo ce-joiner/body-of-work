@@ -43,11 +43,17 @@
                         </a>
                     </div>
                     
-                    <!-- User menu -->
                     <div class="user-menu">
-                        <a href="{% url 'users:profile' %}" class="nav-link user-profile-link">
-                        {{ user.first_name|default:user.username }}
-                        </a>
+    <a href="{% url 'users:profile' %}" class="nav-link user-profile-link">
+        {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" 
+                 alt="{{ user.get_display_name }}" 
+                 class="nav-avatar">
+        {% else %}
+            {{ user.first_name|default:user.username }}
+        {% endif %}
+    </a>
+</div>
                         <!-- Logout form -->
                         <form method="post" action="{% url 'users:logout' %}" class="logout-form">
                             {% csrf_token %}
