@@ -1,6 +1,5 @@
-"""
-Views for the users app
-"""
+
+# Views for the users app
 
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin

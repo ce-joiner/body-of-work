@@ -1,11 +1,12 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}BODY OF WORK{% endblock %}</title>
-    
+
     <!-- CSS Files -->
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/navigation.css' %}">
@@ -14,13 +15,15 @@
     <link rel="stylesheet" href="{% static 'css/photos.css' %}">
     <link rel="stylesheet" href="{% static 'css/photo-management.css' %}">
     <link rel="stylesheet" href="{% static 'css/drag-drop.css' %}">
-    
+
     <!-- Additional CSS that child templates can add -->
     {% block extra_css %}{% endblock %}
-    
+
     <!-- Favicon (can add later) -->
-    {% comment %} <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}"> {% endcomment %}
+    {% comment %}
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}"> {% endcomment %}
 </head>
+
 <body>
     <!-- Header with Navigation -->
     <header class="header">
@@ -29,58 +32,56 @@
             <a href="{% url 'home' %}" class="logo">
                 BODY OF WORK
             </a>
-            
+
             <!-- Navigation Menu -->
             <nav class="nav-menu">
                 {% if user.is_authenticated %}
-                    <!-- Authenticated user navigation -->
-                    <div class="nav-links">
-                        <a href="{% url 'projects:list' %}" class="nav-link">
-                            PROJECTS
-                        </a>
-                        <a href="{% url 'projects:create' %}" class="nav-link">
-                            NEW PROJECT
-                        </a>
-                    </div>
-                    
-                    <div class="user-menu">
-    <a href="{% url 'users:profile' %}" class="nav-link user-profile-link">
-        {% if user.avatar %}
-            <img src="{{ user.avatar.url }}" 
-                 alt="{{ user.get_display_name }}" 
-                 class="nav-avatar">
+                <!-- Authenticated user navigation -->
+                <div class="nav-links">
+                    <a href="{% url 'projects:list' %}" class="nav-link">
+                        PROJECTS
+                    </a>
+                    <a href="{% url 'projects:create' %}" class="nav-link">
+                        NEW PROJECT
+                    </a>
+                </div>
+
+                <div class="user-menu">
+                    <a href="{% url 'users:profile' %}" class="nav-link user-profile-link">
+                        {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.get_display_name }}" class="nav-avatar">
+                        {% else %}
+                        {{ user.first_name|default:user.username }}
+                        {% endif %}
+                    </a>
+                </div>
+                <!-- Logout form -->
+                <form method="post" action="{% url 'users:logout' %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link logout-btn">
+                        SIGN OUT
+                    </button>
+                </form>
+        </div>
         {% else %}
-            {{ user.first_name|default:user.username }}
+        <!-- Anonymous user navigation -->
+        <div class="auth-links">
+            <a href="{% url 'users:login' %}" class="nav-link">
+                SIGN IN
+            </a>
+            <a href="{% url 'users:register' %}" class="btn btn-primary">
+                GET STARTED
+            </a>
+        </div>
         {% endif %}
-    </a>
-</div>
-                        <!-- Logout form -->
-                        <form method="post" action="{% url 'users:logout' %}" class="logout-form">
-                            {% csrf_token %}
-                            <button type="submit" class="nav-link logout-btn">
-                                SIGN OUT
-                            </button>
-                        </form>
-                    </div>
-                {% else %}
-                    <!-- Anonymous user navigation -->
-                    <div class="auth-links">
-                        <a href="{% url 'users:login' %}" class="nav-link">
-                            SIGN IN
-                        </a>
-                        <a href="{% url 'users:register' %}" class="btn btn-primary">
-                            GET STARTED
-                        </a>
-                    </div>
-                {% endif %}
-            </nav>
-            
-            <!-- Mobile menu button - compatible with main.js -->
-            <button class="mobile-menu-button" aria-label="Toggle navigation">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </button>
+        </nav>
+
+        <!-- Mobile menu button - compatible with main.js -->
+        <button class="mobile-menu-button" aria-label="Toggle navigation">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
         </div>
     </header>
 
@@ -88,13 +89,13 @@
     <main class="main-container">
         <!-- Messages (for user feedback) -->
         {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
             </div>
+            {% endfor %}
+        </div>
         {% endif %}
 
         <!-- Page Header (optional, child templates can override) -->
@@ -115,10 +116,11 @@
     <script src="{% static 'js/main.js' %}"></script>
 
     <!-- Photo management modules -->
-     <script src="{% static 'js/photo-selection.js' %}"></script>
+    <script src="{% static 'js/photo-selection.js' %}"></script>
     <script src="{% static 'js/photo-reordering.js' %}"></script>
     <script src="{% static 'js/delete-confirmations.js' %}"></script>
-    
+
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>

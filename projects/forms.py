@@ -95,7 +95,7 @@ class PhotoUploadForm(forms.ModelForm):
                 raise forms.ValidationError(str(e))
         return image
 
-# Form for bulk photo uploads - FIXED to handle multiple files properly
+# Form for bulk photo uploads - handle multiple files properly
 class BulkPhotoUploadForm(forms.Form):
     def __init__(self, *args, **kwargs):
         # Initialize the form with validation limits.
@@ -140,10 +140,6 @@ class PhotoEditForm(forms.ModelForm):
             'needs_attention': 'Mark this photo for attention',
             'is_featured': 'Feature this photo in project gallery',
         }
-        # help_texts = {
-        #     'needs_attention': 'Flag this photo if it needs review or editing',
-        #     'is_featured': 'Featured photos appear prominently in the project',
-        # }
 
 # Form for bulk actions on multiple photos
 class PhotoBulkActionForm(forms.Form):
@@ -195,7 +191,7 @@ class PhotoBulkActionForm(forms.Form):
         except ValueError:
             raise forms.ValidationError("Invalid photo ID format.")
 
-# Form for photo search and filtering (for future use)
+# Form for photo search and filtering (for future use - did not get to fully flesh this out yet)
 class PhotoFilterForm(forms.Form):
     search = forms.CharField(
         max_length=100,

@@ -168,6 +168,7 @@ class Photo(models.Model):
     # Properties - computed attributes that act like fields but generate values dynamically
     # These can be accessed in templates like {{ photo.thumbnail_url }} without parentheses
     # Will use for generating different image sizes, formatting data, and extracting metadata
+    # Attribution: https://realpython.com/python-property/ 
 
     @property
     def medium_url(self):
