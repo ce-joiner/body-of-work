@@ -100,9 +100,6 @@ class PhotoReordering {
         // Disable selection controls during drag
         this.toggleSelectionControls(false);
         
-        // Update instructions
-        this.updateInstructions('Drop to reorder');
-        
         // Disable photo links during drag
         this.togglePhotoLinks(false);
     }
@@ -238,29 +235,6 @@ class PhotoReordering {
     setupInstructions() {
         this.dragInstructions = document.getElementById('drag-hint');
         if (!this.dragInstructions) {
-            // Create instructions if they don't exist
-            this.createInstructionsElement();
-        }
-    }
-
-    /**
-     * Create instructions element
-     */
-    createInstructionsElement() {
-        const galleryHeader = document.querySelector('.gallery-header');
-        if (galleryHeader) {
-            const instructionsDiv = document.createElement('div');
-            instructionsDiv.className = 'drag-instructions';
-            instructionsDiv.style.cssText = 'color: #6b7280; font-size: 0.875rem;';
-            
-            const instructionsSpan = document.createElement('span');
-            instructionsSpan.id = 'drag-hint';
-            instructionsSpan.textContent = '💡 Drag photos to reorder them';
-            
-            instructionsDiv.appendChild(instructionsSpan);
-            galleryHeader.appendChild(instructionsDiv);
-            
-            this.dragInstructions = instructionsSpan;
         }
     }
 
@@ -362,27 +336,39 @@ class PhotoReordering {
     }
 
     /**
-     * Get CSRF token for AJAX requests
-     */
-    getCSRFToken() {
-        if (typeof window.getCookie === 'function') {
-            return window.getCookie('csrftoken');
-        }
-        
-        // Fallback CSRF token extraction
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, 10) === 'csrftoken=') {
-                    cookieValue = decodeURIComponent(cookie.substring(10));
-                    break;
-                }
+ * Get CSRF token for AJAX requests
+ */
+getCSRFToken() {
+    // Try multiple methods to get CSRF token
+    let token = null;
+    
+    // From meta tag
+    const metaToken = document.querySelector('meta[name="csrf-token"]');
+    if (metaToken) {
+        token = metaToken.getAttribute('content');
+    }
+    
+    // From cookie (Django's default)
+    if (!token) {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'csrftoken') {
+                token = value;
+                break;
             }
         }
-        return cookieValue;
     }
+    
+    // From form input (if present)
+    if (!token) {
+        const csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+        if (csrfInput) {
+            token = csrfInput.value;
+        }
+    }
+    return token;
+}
 
     /**
      * Show fallback message when SortableJS is not available

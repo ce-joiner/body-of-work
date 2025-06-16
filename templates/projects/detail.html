@@ -55,11 +55,6 @@
         <div class="gallery-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <h2 class="card-title">Photos</h2>
             
-            <!-- Clean Drag Instructions -->
-            <div class="drag-instructions" style="color: #6b7280; font-size: 0.875rem;">
-                <span id="drag-hint">Drag photos to reorder them</span>
-            </div>
-
             <!-- Bulk Actions -->
             <div class="bulk-actions" id="bulk-actions" style="display: none;">
                 <form method="post" action="{% url 'projects:photos_bulk_action' project.pk %}" id="bulk-form">
@@ -91,7 +86,7 @@
                 Select None
             </button>
             <span class="selection-status">
-                <span id="selection-status">Click photos to select them</span>
+                <span id="selection-status">Click photos to select them, drag and drop to reorder</span>
             </span>
         </div>
 
@@ -159,3 +154,4 @@
 <!-- Include SortableJS from CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 {% endblock %}
+

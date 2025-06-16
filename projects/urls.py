@@ -15,6 +15,7 @@ urlpatterns = [
 
     # Photo management URLs
     path('<int:project_id>/photos/upload/', views.photo_upload, name='photo_upload'),
+    path('<int:project_id>/photos/reorder/', views.photo_reorder, name='photo_reorder'),
     path('photos/<int:photo_id>/', views.photo_detail, name='photo_detail'),
     path('photos/<int:photo_id>/edit/', views.photo_edit, name='photo_edit'),
     path('photos/<int:photo_id>/delete/', views.photo_delete, name='photo_delete'),

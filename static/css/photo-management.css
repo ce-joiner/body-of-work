@@ -42,7 +42,7 @@
 
 .selection-status {
     color: #6b7280;
-    font-weight: 500;
+    font-weight: 300;
 }
 
 /* Bulk Actions */
@@ -71,6 +71,16 @@
 
 .bulk-actions .btn {
     white-space: nowrap;
+}
+
+/* Bulk Submit Button Styling */
+#bulk-submit {
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+#bulk-submit #selected-count {
+    margin: 0 0.25rem; /* Add space before and after the count */
 }
 
 /* Photo Status Badges */
