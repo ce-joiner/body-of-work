@@ -184,17 +184,6 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
-# else:
-#     # Use local storage for development
-#     MEDIA_ROOT = BASE_DIR / 'media'
-#     STORAGES = {
-#         "default": {
-#             "BACKEND": "django.core.files.storage.FileSystemStorage",
-#         },
-#         "staticfiles": {
-#             "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-#         },
-#     }
 
 # File upload settings
 FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100MB (was 10MB)
