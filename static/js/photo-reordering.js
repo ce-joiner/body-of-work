@@ -145,7 +145,7 @@ class PhotoReordering {
         
         if (photoIds.length === 0) {
             console.warn('No photo IDs found for reordering');
-            this.updateInstructions('❌ No photos to reorder', 'error');
+            this.updateInstructions(' No photos to reorder', 'error');
             return;
         }
         
@@ -188,7 +188,7 @@ class PhotoReordering {
             
         } catch (error) {
             console.error('Error saving photo order:', error);
-            this.updateInstructions('❌ Save failed', 'error');
+            this.updateInstructions(' Save failed', 'error');
             this.showNotification('Failed to save photo order. Please try again.', 'error');
             
             // Reset instructions after delay
