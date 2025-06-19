@@ -13,6 +13,10 @@ python-decouple = "*"
 django-ratelimit = "*"
 psycopg2-binary = "*"
 django-widget-tweaks = "*"
+python-dotenv = "*"
+whitenoise = "*"
+gunicorn = "*"
+dj-database-url = "*"
 
 [dev-packages]
 

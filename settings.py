@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 
 import os
+import dj_database_url
 from pathlib import Path
 from decouple import Config, RepositoryEnv
 import cloudinary
@@ -39,9 +40,9 @@ else:
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=not 'ON_HEROKU' in os.environ, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -62,6 +63,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -94,16 +96,26 @@ WSGI_APPLICATION = 'wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default='body_of_work'),
-        'USER': config('DB_USER', default='postgres'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5432'),
+if 'ON_HEROKU' in os.environ:
+    DATABASES = {
+        "default": dj_database_url.config(
+            env='DATABASE_URL',
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True,
+        ),
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME', default='body_of_work'),
+            'USER': config('DB_USER', default='postgres'),
+            'PASSWORD': config('DB_PASSWORD', default=''),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='5432'),
+        }
+    }
 
 
 # Custom user model
@@ -206,21 +218,28 @@ ALLOWED_IMAGE_TYPES = [
 # Rate limiting
 RATELIMIT_ENABLE = True
 
-# Security settings
+#  Production Security settings
 CSRF_COOKIE_HTTPONLY = True
-if not DEBUG:
+if 'ON_HEROKU' in os.environ:
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Session settings for better user experience
+SESSION_COOKIE_AGE = 86400  # 24 hours
+SESSION_COOKIE_HTTPONLY = True
+# Set SESSION_COOKIE_SECURE based on environment
+if 'ON_HEROKU' in os.environ:
+    SESSION_COOKIE_SECURE = True  # HTTPS in production
+else:
+    SESSION_COOKIE_SECURE = False  # HTTP in local development
+
+# Remember user login preference
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 # Login/Logout redirect URLs
 LOGIN_URL = 'users:login'
 LOGIN_REDIRECT_URL = 'projects:list'
 LOGOUT_REDIRECT_URL = 'users:login'
-
-# Session settings for better user experience
-SESSION_COOKIE_AGE = 86400  # 24 hours
-SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
-
-# Remember user login preference
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
