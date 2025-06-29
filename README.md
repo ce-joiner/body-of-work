@@ -306,4 +306,4 @@ This is currently a solo project.
 
 Casey Joiner - caseyejoiner@gmail.com
 
-Project Link: [https://github.com/ce-joiner/body-of-work](https://github.com/ce-joiner/body-of-work)
+Project Link: [Body of Work](https://body-of-work-453020c24178.herokuapp.com/)
